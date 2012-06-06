@@ -2,31 +2,29 @@
 ._wPaint_options{float:left;padding: 2px;}
 
 ._wPaint_icon,
-._wPaint_lineWidth,
+._wPaint_dropDown,
 ._wPaint_color{
-	float:left; width:18px; height:18px; margin:0 2px;
+	float:left; height:18px; margin:0 2px; line-height:16px;
 	background-position:center center; background-repeat:no-repeat; cursor:pointer;
 	border-style:solid; border-width:1px; padding:3px; border-radius:5px;
 }
 
-._wPaint_icon,
-._wPaint_lineWidth,
-._wColorPicker_buttonBorder{
-	border-color:#999999
-}
-._wPaint_icon:hover,
-._wPaint_icon.active{
-	border-color:#F88017;
-	background-color:#E5E5E5;
-}
+._wPaint_icon,._wPaint_color{width:18px;}
 
-._wPaint_lineWidth{position:relative; width:39px;}
-._wPaint_lineWidth select{position:absolute; left:3px; top:3px; margin:0px; background-color:#EFEFEF; border:none; cursor:pointer;}
+._wPaint_icon,
+._wPaint_dropDown,
+._wColorPicker_buttonBorder{border-color:#999999}
+
+._wPaint_icon:hover,
+._wPaint_icon.active{border-color:#F88017; background-color:#E5E5E5;}
+
+._wPaint_dropDown select{margin-top:-2px; background-color:#EFEFEF; border:none; cursor:pointer;}
 
 ._wPaint_handle{float:left; width:10px; height:30px; background: #AFAFAF; border-radius:3px 0 0 3px; cursor:pointer;}
 ._wPaint_colorPicker{float:left; height:24px;}
 
-._wPaint_eraser_cursor{position:absolute; border:solid #000000 1px; display:none;z-index:999998;}
+._wPaint_textInput{position:absolute; border:dotted #0000FF 1px; background:none; margin:0px; padding:0px; outline-width:0; word-wrap:break-word; overflow:hidden;}
+/*._wPaint_textHolder{position:absolute; border:dotted #0000FF 1px;}*/
 
 /***********************************************************
  * Images
@@ -36,4 +34,8 @@
 ._wPaint_ellipse{background-image: url('./images/icon_ellipse.png');}
 ._wPaint_line{background-image: url('./images/icon_line.png');}
 ._wPaint_pencil{background-image: url('./images/icon_pencil.png');}
+._wPaint_text{background-image: url('./images/icon_text.png');}
 ._wPaint_eraser{background-image: url('./images/icon_eraser.png');}
+._wPaint_bold{background-image: url('./images/icon_bold.png');}
+._wPaint_italic{background-image: url('./images/icon_italic.png');}
+._wPaint_underline{background-image: url('./images/icon_underline.png');}
