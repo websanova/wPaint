@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @docs            http://www.websanova.com/plugins/websanova/paint
- * @version         Version 1.3.3
+ * @version         Version 1.3.4
  *
  ******************************************/
 (function($)
@@ -66,7 +66,7 @@
 				return false;	
 			}
 			
-			var canvas = new Canvas($settings);
+			var canvas = new Canvas($settings, elem);
 			var mainMenu = new MainMenu();
 			var textMenu = new TextMenu();
 			
@@ -142,9 +142,10 @@
 	/**
 	 * Canvas class definition
 	 */
-	function Canvas(settings)
+	function Canvas(settings, elem)
 	{
 		this.settings = settings;
+		this.$elem = elem;
 		
 		this.draw = false;
 
@@ -283,6 +284,10 @@
 			var func = $this['draw' + mode + '' + event];	
 			
 			if(func) func($e, $this);
+
+
+			console.log(event)
+			if($this.settings['draw' + event]) $this.settings['draw' + event].apply($this, [e, mode]);
 		},
 		
 		/*******************************************************************************
