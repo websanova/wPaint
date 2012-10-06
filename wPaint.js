@@ -89,6 +89,8 @@
 				mode: "click",
 				initColor: $settings.fillStyle,
 				buttonSize: buttonSize,
+				showSpeed: 300,
+				hideSpeed: 300,
 				onSelect: function(color){
 					canvas.settings.fillStyle = color;
 					canvas.textInput.css({color: color});
@@ -99,6 +101,8 @@
 				mode: "click",
 				initColor: $settings.strokeStyle,
 				buttonSize: buttonSize,
+				showSpeed: 300,
+				hideSpeed: 300,
 				onSelect: function(color){
 					canvas.settings.strokeStyle = color;
 				}
