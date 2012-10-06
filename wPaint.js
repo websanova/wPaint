@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @docs            http://www.websanova.com/plugins/websanova/paint
- * @version         Version x.x
+ * @version         Version 1.3.1
  *
  ******************************************/
 (function($)
@@ -83,8 +83,8 @@
 			mainMenu.set_mode(mainMenu, canvas, $settings.mode);
 			
 			//pull from css so that it is dynamic
-			var buttonSize = $("._wPaint_icon").outerHeight() - (parseInt($("._wPaint_icon").css('paddingTop').split('px')[0]) + parseInt($("._wPaint_icon").css('paddingBottom').split('px')[0]));
-			
+			var buttonSize = $("._wPaint_icon").outerHeight(true) - (parseInt($("._wPaint_icon").css('paddingTop').split('px')[0]) + parseInt($("._wPaint_icon").css('paddingBottom').split('px')[0]));
+
 			mainMenu.menu.find("._wPaint_fillColorPicker").wColorPicker({
 				mode: "click",
 				initColor: $settings.fillStyle,
