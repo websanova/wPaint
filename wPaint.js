@@ -8,13 +8,11 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @docs            http://www.websanova.com/plugins/websanova/paint
- * @version         Version 1.3.2
+ * @version         Version 1.3.3
  *
  ******************************************/
 (function($)
 {
-	var shapes = ['Rectangle', 'Ellipse', 'Line', 'Text'];
-
 	$.fn.wPaint = function(option, settings)
 	{
 		if(typeof option === 'object')
@@ -23,23 +21,27 @@
 		}
 		else if(typeof option == 'string')
 		{
-			var data = this.data('_wPaint_canvas');
-			var hit = true;
+			var values = [];
 
-			if(data)
+			var elements = this.each(function()
 			{
-				if(option == 'image' && settings === undefined) return data.getImage();
-				else if(option == 'image' && settings !== undefined) data.setImage(settings);
-				else if($.fn.wPaint.defaultSettings[option] !== undefined)
+				var data = $(this).data('_wPaint');
+
+				if(data)
 				{
-					if(settings !== undefined) data.settings[option] = settings;
-					else return data.settings[option];
+					if(option == 'image' && settings === undefined) { values.push(data.getImage()); }
+					else if(option == 'image' && settings !== undefined) { data.setImage(settings); }
+					else if($.fn.wPaint.defaultSettings[option] !== undefined)
+					{
+						if(settings !== undefined) { data.settings[option] = settings; }
+						else { values.push(data.settings[option]); }
+					}
 				}
-				else hit = false;
-			}
-			else hit = false;
-			
-			return hit;
+			});
+
+			if(values.length === 1) { return values[0]; }
+			if(values.length > 0) { return values; }
+			else { return elements; }
 		}
 
 		//clean up some variables
@@ -110,9 +112,11 @@
 			
 			if($settings.image) canvas.setImage($settings.image);
 			
-			elem.data('_wPaint_canvas', canvas);
+			elem.data('_wPaint', canvas);
 		});
 	}
+
+	var shapes = ['Rectangle', 'Ellipse', 'Line', 'Text'];
 
 	$.fn.wPaint.defaultSettings = {
 		mode				: 'Pencil',			// drawing mode - Rectangle, Ellipse, Line, Pencil, Eraser
@@ -134,8 +138,6 @@
 		drawMove			: null,				// function to call during a draw
 		drawUp				: null				// function to call at end of draw
 	};
-
-	
 
 	/**
 	 * Canvas class definition
