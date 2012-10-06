@@ -285,8 +285,6 @@
 			
 			if(func) func($e, $this);
 
-
-			console.log(event)
 			if($this.settings['draw' + event]) $this.settings['draw' + event].apply($this, [e, mode]);
 		},
 		
