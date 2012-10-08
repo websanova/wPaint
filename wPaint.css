@@ -30,6 +30,10 @@
  * Images
  ***********************************************************/
 ._wPaint_handle{background-image: url('./images/menu_handle.png');}
+._wPaint_undo{background-image: url('./images/undo_inactive.png');}
+._wPaint_undo.uactive{background-image: url('./images/undo.png');}
+._wPaint_redo{background-image: url('./images/redo_inactive.png');}
+._wPaint_redo.uactive{background-image: url('./images/redo.png');}
 ._wPaint_rectangle{background-image: url('./images/icon_rectangle.png');}
 ._wPaint_ellipse{background-image: url('./images/icon_ellipse.png');}
 ._wPaint_line{background-image: url('./images/icon_line.png');}

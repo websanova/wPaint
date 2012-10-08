@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.4.0
+ * @version         Version 1.5.0
  *
  ******************************************/
 (function($)
@@ -30,7 +30,7 @@
 				if(data)
 				{
 					if(option == 'image' && settings === undefined) { values.push(data.getImage()); }
-					else if(option == 'image' && settings !== undefined) { data.setImage(settings); }
+					else if(option == 'image' && settings !== undefined) { data.setImage(settings, true); }
 					else if($.fn.wPaint.defaultSettings[option] !== undefined)
 					{
 						if(settings !== undefined) { data.settings[option] = settings; }
@@ -67,27 +67,27 @@
 			}
 			
 			var canvas = new Canvas($settings, elem);
-			var mainMenu = new MainMenu();
-			var textMenu = new TextMenu();
+			canvas.mainMenu = new MainMenu();
+			canvas.textMenu = new TextMenu();
 			
 			elem.append(canvas.generate(elem.width(), elem.height()));
 			elem.append(canvas.generateTemp());
 			elem.append(canvas.generateTextInput());
 			
 			$('body')
-			.append(mainMenu.generate(canvas, textMenu))
-			.append(textMenu.generate(canvas, mainMenu));
+			.append(canvas.mainMenu.generate(canvas, canvas.textMenu))
+			.append(canvas.textMenu.generate(canvas, canvas.mainMenu));
 
 			//init the snap on the text menu
-			mainMenu.moveTextMenu(mainMenu, textMenu);
+			canvas.mainMenu.moveTextMenu(canvas.mainMenu, canvas.textMenu);
 
 			//init mode
-			mainMenu.set_mode(mainMenu, canvas, $settings.mode);
-			
+			canvas.mainMenu.set_mode(canvas.mainMenu, canvas, $settings.mode);
+
 			//pull from css so that it is dynamic
 			var buttonSize = $("._wPaint_icon").outerHeight(true) - (parseInt($("._wPaint_icon").css('paddingTop').split('px')[0]) + parseInt($("._wPaint_icon").css('paddingBottom').split('px')[0]));
 
-			mainMenu.menu.find("._wPaint_fillColorPicker").wColorPicker({
+			canvas.mainMenu.menu.find("._wPaint_fillColorPicker").wColorPicker({
 				mode: "click",
 				initColor: $settings.fillStyle,
 				buttonSize: buttonSize,
@@ -99,7 +99,7 @@
 				}
 			});
 			
-			mainMenu.menu.find("._wPaint_strokeColorPicker").wColorPicker({
+			canvas.mainMenu.menu.find("._wPaint_strokeColorPicker").wColorPicker({
 				mode: "click",
 				initColor: $settings.strokeStyle,
 				buttonSize: buttonSize,
@@ -110,8 +110,15 @@
 				}
 			});
 			
-			if($settings.image) canvas.setImage($settings.image);
-			
+			if($settings.image)
+			{
+				canvas.setImage($settings.image, true);
+			}
+			else
+			{
+				canvas.addUndo();
+			}
+
 			elem.data('_wPaint', canvas);
 		});
 	}
@@ -146,7 +153,13 @@
 	{
 		this.settings = settings;
 		this.$elem = elem;
+		this.mainMenu = null;
+		this.textMenu = null;
 		
+		this.undoArray = [];
+		this.undoCurrent = -1;
+		this.undoMax = 10;
+
 		this.draw = false;
 
 		this.canvas = null;
@@ -167,16 +180,7 @@
 	}
 	
 	Canvas.prototype = 
-	{
-		//x,y,underlineY,underlineWidth
-		/*fontOffsets: {
-			'Arial'		: {'8': [2,2,-1,1], '9': [2,2,-1,1], '10': [2,2,-1,1], '11': [2,2,-1,1], '12': [2,3,-2,1], '13': [2,3,-2,1], '14': [2,2,-2,1], '15': [2,2,-1,1], '16': [2,2,-1,1], '17': [2,2,-2,1], '18': [2,3,-2,1], '19': [2,3,-2,1], '20': [2,3,-2,1]},
-			'Courier'	: {'8': [2,1,-1,1], '9': [2,2,0,1], '10': [2,1,0,1], '11': [2,2,0,1], '12': [2,3,-1,1], '13': [2,2,0,1], '14': [2,2,0,1], '15': [2,2,-1,1], '16': [2,2,-1,1], '17': [2,2,0,1], '18': [2,1,0,1], '19': [2,2,-1,1], '20': [2,2,-1,1]},
-			'Times'		: {'8': [2,2,-1,1], '9': [2,2,-1,1], '10': [2,2,-1,1], '11': [2,2,-1,1], '12': [2,3,-2,1], '13': [2,3,-2,1], '14': [2,2,-1,1], '15': [2,2,-1,1], '16': [2,2,-1,1], '17': [2,2,-2,1], '18': [2,3,-2,1], '19': [2,3,-2,1], '20': [2,3,-2,1]},
-			'Trebuchet'	: {'8': [2,2,-1,1], '9': [2,2,-1,1], '10': [2,2,-1,1], '11': [2,2,-1,1], '12': [2,3,-2,1], '13': [2,3,-2,1], '14': [2,2,-1,1], '15': [2,2,-1,1], '16': [2,2,-1,1], '17': [2,2,-2,1], '18': [2,3,-2,1], '19': [2,3,-2,1], '20': [2,3,-2,1]},
-			'Verdana'	: {'8': [2,2,-1,1], '9': [2,2,-1,1], '10': [2,2,-1,1], '11': [2,2,-1,1], '12': [2,3,-2,1], '13': [2,3,-2,1], '14': [2,2,-1,1], '15': [2,2,-1,1], '16': [2,2,-1,1], '17': [2,2,-2,1], '18': [2,3,-2,1], '19': [2,3,-2,1], '20': [2,3,-2,1]},
-		},*/
-		
+	{	
 		/*******************************************************************************
 		 * Generate canvases and events
 		 *******************************************************************************/
@@ -286,6 +290,8 @@
 			if(func) func($e, $this);
 
 			if($this.settings['draw' + event]) $this.settings['draw' + event].apply($this, [e, mode]);
+
+			if($this.settings.mode !== 'Text' && event === 'Up') { this.addUndo(); }
 		},
 		
 		/*******************************************************************************
@@ -468,6 +474,8 @@
 		
 		drawTextUp: function(e, $this)
 		{
+			if(e) { this.addUndo(); }
+
 			var fontString = '';
 			if($this.settings.fontTypeItalic) fontString += 'italic ';
 			//if($this.settings.fontTypeUnderline) fontString += 'underline ';
@@ -569,19 +577,84 @@
 			return this.canvas.toDataURL();
 		},
 		
-		setImage: function(data)
+		setImage: function(data, addUndo)
 		{
 			var $this = this;
 			
 			var myImage = new Image();
-			myImage.src = data;
+			myImage.src = data.toString();
 
 			$this.ctx.clearRect(0, 0, $this.canvas.width, $this.canvas.height);			
 			
 			$(myImage).load(function(){
 				$this.ctx.drawImage(myImage, 0, 0);
+				if(addUndo) { $this.addUndo(); }
 			});
-		}
+		},
+
+		/*******************************************************************************
+		 * undo / redo
+		 *******************************************************************************/
+
+		 addUndo: function()
+		 {
+		 	//if it's not at the end of the array we need to repalce the current array position
+		 	if(this.undoCurrent < this.undoArray.length-1)
+		 	{
+				this.undoArray[++this.undoCurrent] = this.getImage();
+		 	}
+		 	else // owtherwise we push normally here
+		 	{
+		 		this.undoArray.push(this.getImage());
+
+		 		//if we're at the end of the array we need to slice off the front - in increment required
+		 		if(this.undoArray.length > this.undoMax){ this.undoArray = this.undoArray.slice(1, this.undoArray.length); }
+		 		//if we're NOT at the end of the array, we just increment
+		 		else{ this.undoCurrent++; }
+		 	}
+
+		 	//for undo's then a new draw we want to remove everything afterwards - in most cases nothing will happen here
+		 	while(this.undoCurrent != this.undoArray.length-1) { this.undoArray.pop(); }
+
+		 	this.undoToggleIcons();
+		 },
+
+		 setUndoImage: function()
+		 {
+		 	this.setImage(this.undoArray[this.undoCurrent]);
+		 },
+
+		 undoNext: function()
+		 {
+		 	if(this.undoArray[this.undoCurrent+1]) { this.undoCurrent++; this.setUndoImage(); }
+
+		 	this.undoToggleIcons();
+		 },
+
+		 undoPrev: function()
+		 {
+		 	if(this.undoArray[this.undoCurrent-1]) { this.undoCurrent--; this.setUndoImage(); }
+
+		 	this.undoToggleIcons();
+		 },
+
+		 undoToggleIcons: function()
+		 {
+		 	var iconUndo = this.mainMenu.menu.find("._wPaint_undo");
+			var iconRedo = this.mainMenu.menu.find("._wPaint_redo");
+
+			if(this.undoCurrent > 0 && this.undoArray.length > 1)
+			{
+				 if(!iconUndo.hasClass('uactive')) { iconUndo.addClass('uactive'); }
+			}
+			else { iconUndo.removeClass('uactive'); }
+
+			if(this.undoCurrent < this.undoArray.length-1)
+			{
+				if(!iconRedo.hasClass('uactive')) { iconRedo.addClass('uactive'); }
+			}
+			else { iconRedo.removeClass('uactive'); }
+		 }
 	}
 	
 	/**
@@ -614,6 +687,8 @@
 			//content
 			var menuContent = 
 			$('<div class="_wPaint_options"></div>')
+			.append($('<div class="_wPaint_icon _wPaint_undo" title="undo"></div>').click(function(){ $canvas.undoPrev(); }))
+			.append($('<div class="_wPaint_icon _wPaint_redo" title="redo"></div>').click(function(){ $canvas.undoNext(); }))
 			.append($('<div class="_wPaint_icon _wPaint_rectangle" title="rectangle"></div>').click(function(){ $this.set_mode($this, $canvas, 'Rectangle'); }))
 			.append($('<div class="_wPaint_icon _wPaint_ellipse" title="ellipse"></div>').click(function(){ $this.set_mode($this, $canvas, 'Ellipse'); }))
 			.append($('<div class="_wPaint_icon _wPaint_line" title="line"></div>').click(function(){ $this.set_mode($this, $canvas, 'Line'); }))
