@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.5.0
+ * @version         Version 1.6.0
  *
  ******************************************/
 (function($)
@@ -29,7 +29,8 @@
 
 				if(data)
 				{
-					if(option == 'image' && settings === undefined) { values.push(data.getImage()); }
+					if(option == 'clear') { data.clearAll(); }
+					else if(option == 'image' && settings === undefined) { values.push(data.getImage()); }
 					else if(option == 'image' && settings !== undefined) { data.setImage(settings, true); }
 					else if($.fn.wPaint.defaultSettings[option] !== undefined)
 					{
@@ -654,7 +655,17 @@
 				if(!iconRedo.hasClass('uactive')) { iconRedo.addClass('uactive'); }
 			}
 			else { iconRedo.removeClass('uactive'); }
-		 }
+		 },
+
+		/*******************************************************************************
+		 * Functions
+		 *******************************************************************************/
+		clearAll: function()
+		{	
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+			this.addUndo();
+		},
 	}
 	
 	/**
@@ -689,6 +700,7 @@
 			$('<div class="_wPaint_options"></div>')
 			.append($('<div class="_wPaint_icon _wPaint_undo" title="undo"></div>').click(function(){ $canvas.undoPrev(); }))
 			.append($('<div class="_wPaint_icon _wPaint_redo" title="redo"></div>').click(function(){ $canvas.undoNext(); }))
+			.append($('<div class="_wPaint_icon _wPaint_clear" title="clear"></div>').click(function(){ $canvas.clearAll(); }))
 			.append($('<div class="_wPaint_icon _wPaint_rectangle" title="rectangle"></div>').click(function(){ $this.set_mode($this, $canvas, 'Rectangle'); }))
 			.append($('<div class="_wPaint_icon _wPaint_ellipse" title="ellipse"></div>').click(function(){ $this.set_mode($this, $canvas, 'Ellipse'); }))
 			.append($('<div class="_wPaint_icon _wPaint_line" title="line"></div>').click(function(){ $this.set_mode($this, $canvas, 'Line'); }))

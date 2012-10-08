@@ -33,14 +33,21 @@ $('#elem').wPaint({
 Update settings on the fly:
 
 ```javascript
-$('input').wPaint('image', '<image_data>');
+$('#elem').wPaint('image', '<image_data>');
 ```
 
 Retrieve settings, if more than one it will return an array otherwise just the value.
 
 ```javascript
 console.log($('#elem').wPaint('strokeStyle'))            // #FFFF00
-console.log($('input').wPaint('strokeStyle'))            // ['#FFFF00', '#FFFF00']
+console.log($('.elem').wPaint('strokeStyle'))            // ['#FFFF00', '#FFFF00']
+```
+
+
+## Methods
+
+```javascript
+$('#elem').wPaint('clear');
 ```
 
 

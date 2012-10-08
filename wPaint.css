@@ -34,6 +34,7 @@
 ._wPaint_undo.uactive{background-image: url('./images/undo.png');}
 ._wPaint_redo{background-image: url('./images/redo_inactive.png');}
 ._wPaint_redo.uactive{background-image: url('./images/redo.png');}
+._wPaint_clear{background-image: url('./images/clear.png');}
 ._wPaint_rectangle{background-image: url('./images/icon_rectangle.png');}
 ._wPaint_ellipse{background-image: url('./images/icon_ellipse.png');}
 ._wPaint_line{background-image: url('./images/icon_line.png');}
