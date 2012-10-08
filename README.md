@@ -8,7 +8,7 @@ A jQuery paint plugin. [Check out the live demo](http://www.websanova.com/plugin
 Available options with notes, the values here are the defaults.
 
 ```javascript
-$('input, textarea').wPaint({
+$('#elem').wPaint({
     mode                : 'Pencil',         // drawing mode - Rectangle, Ellipse, Line, Pencil, Eraser
     lineWidthMin        : '0',              // line width min for select drop down
     lineWidthMax        : '10',             // line widh max for select drop down
