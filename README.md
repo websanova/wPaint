@@ -24,6 +24,7 @@ $('#elem').wPaint({
     fontTypeItalic      : false,            // text input italic enable/disable
     fontTypeUnderline   : false,            // text input italic enable/disable
     image               : null,             // preload image - base64 encoded data
+    imageBg             : null,             // preload image bg, cannot be altered but saved with image
     drawDown            : null,             // function to call when start a draw
     drawMove            : null,             // function to call during a draw
     drawUp              : null,             // function to call at end of draw
@@ -35,6 +36,7 @@ Update settings on the fly:
 
 ```javascript
 $('#elem').wPaint('image', '<image_data>');
+$('#elem').wPaint('image', '/path/to/file.jpg');
 ```
 
 Retrieve settings, if more than one it will return an array otherwise just the value.
@@ -68,6 +70,19 @@ up:   <input id="canvasUp" type="text" />
         drawDown: function(e, mode){ $("#canvasDown").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
         drawMove: function(e, mode){ $("#canvasMove").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
         drawUp: function(e, mode){ $("#canvasUp").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); }
+    });
+</script>
+```
+
+Init with background (bg is saved with image but cannot be altered):
+
+```html
+<div id="wPaint"></div>
+
+<script type="text/javascript">
+    $("#wPaint").wPaint({
+        image: './some/path/imagepreload.png',
+        bgImage: './some/path/imagebg.png'
     });
 </script>
 ```

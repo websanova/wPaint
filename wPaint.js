@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.7.0
+ * @version         Version 1.8.0
  *
  ******************************************/
 (function($)
@@ -71,6 +71,7 @@
 			canvas.mainMenu = new MainMenu();
 			canvas.textMenu = new TextMenu();
 			
+			if($settings.imageBg) elem.append(canvas.generateBg(elem.width(), elem.height(), $settings.imageBg));
 			elem.append(canvas.generate(elem.width(), elem.height()));
 			elem.append(canvas.generateTemp());
 			elem.append(canvas.generateTextInput());
@@ -142,6 +143,7 @@
 		fontTypeItalic		: false,			// text input italic enable/disable
 		fontTypeUnderline	: false,			// text input italic enable/disable
 		image				: null,				// preload image - base64 encoded data
+		imageBg				: null,				// preload image bg, cannot be altered but saved with image
 		drawDown			: null,				// function to call when start a draw
 		drawMove			: null,				// function to call during a draw
 		drawUp				: null,				// function to call at end of draw
@@ -170,6 +172,9 @@
 		this.canvasTemp = null;
 		this.ctxTemp = null;
 		
+		this.canvasBg = null;
+		this.ctxBg = null;
+
 		this.canvasTempLeftOriginal = null;
 		this.canvasTempTopOriginal = null;
 		
@@ -256,6 +261,31 @@
 			$(this.canvasTemp).css({position: 'absolute'}).hide();
 			
 			return $(this.canvasTemp);
+		},
+
+		generateBg: function(width, height, data)
+		{
+			var $this = this;
+			
+			if(!this.canvasBg)
+			{
+				this.canvasBg = document.createElement('canvas');
+				this.ctxBg = this.canvasBg.getContext('2d');
+
+				$(this.canvasBg).attr('id', 'mofo').css({position: 'absolute', left: 0, top: 0}).attr('width', width).attr('height', height);
+			}
+				
+			var myImage = new Image();
+			myImage.src = data.toString();
+
+			$this.ctxBg.clearRect(0, 0, $this.canvasBg.width, $this.canvasBg.height);
+			
+			$(myImage).load(function()
+			{
+				$this.ctxBg.drawImage(myImage, 0, 0);
+			});
+
+			return $(this.canvasBg);
 		},
 		
 		generateTextInput: function()
@@ -516,9 +546,9 @@
 			lines = $this.textInput.val(linesNew.join('\n')).val().split('\n');
 			
 			var offset = $this.textInput.position();
-			var left = offset.left;// + parseInt($this.fontOffsets[$this.settings.fontFamily][$this.settings.fontSize][0] || 0);
-			var top = offset.top;// + parseInt($this.fontOffsets[$this.settings.fontFamily][$this.settings.fontSize][1] || 0);
-			var underlineOffset = 0;// = parseInt($this.fontOffsets[$this.settings.fontFamily][$this.settings.fontSize][2] || 0);
+			var left = offset.left;
+			var top = offset.top;
+			var underlineOffset = 0;
 			
 			for(var i=0, ii=lines.length; i<ii; i++)
 			{
@@ -576,7 +606,17 @@
 		 *******************************************************************************/
 		getImage: function()
 		{
-			return this.canvas.toDataURL();
+			this.canvasSave = document.createElement('canvas');
+			this.ctxSave = this.canvasSave.getContext('2d');
+
+			$(this.canvasSave).css({display:'none', position: 'absolute', left: 0, top: 0}).attr('width', $(this.canvas).attr('width')).attr('height', $(this.canvas).attr('height'));
+
+			//if a bg image is set, it will automatically save with the image
+			if(this.canvasBg) this.ctxSave.drawImage(this.canvasBg, 0, 0);
+
+			this.ctxSave.drawImage(this.canvas, 0, 0);
+
+			return this.canvasSave.toDataURL();
 		},
 		
 		setImage: function(data, addUndo)
@@ -586,7 +626,7 @@
 			var myImage = new Image();
 			myImage.src = data.toString();
 
-			$this.ctx.clearRect(0, 0, $this.canvas.width, $this.canvas.height);			
+			$this.ctx.clearRect(0, 0, $this.canvas.width, $this.canvas.height);
 			
 			$(myImage).load(function(){
 				$this.ctx.drawImage(myImage, 0, 0);
