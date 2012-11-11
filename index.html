@@ -22,7 +22,7 @@
 </head>
 <body>
 	
-	<h3>Default</h3>
+	<h2>Default</h2>
 
 	<table><tr>
 		<td>
@@ -36,9 +36,9 @@
 				<a href="javascript:loadImage_base64();">load image (base64 encoded)</a> | 
 				<a href="javascript:loadImage_png();">load image (png)</a> | 
 				<a href="javascript:loadImage_jpg();">load image (jpg)</a> | 
-				<a href="javascript:loadImage_bg();">load with bg</a> | 
 				<a href="javascript:saveImage();">save image</a> | 
 				<a href="javascript:clearCanvas();">clear canvas</a>
+				<input type="button" value="Upload Image" onclick="upload_image('wPaint');"/>
 			</div><br/>
 			
 			image data: <input id="canvasImageData" type="text" />
@@ -47,8 +47,6 @@
 			up: <input id="canvasUp" type="text" />
 		</td>
 	</tr></table>
-
-	<br/><br/>
 	
 	<script type="text/javascript">
 		$("#wPaint").wPaint({
@@ -86,9 +84,24 @@
 			$("#wPaint").wPaint("clear");
 		}
 		
+		function upload_image(id)
+		{
+			var imageData = $("#" + id).wPaint("image");
+
+			$.ajax({
+				url: '/wPaint/upload.php',
+				data: {image: imageData},
+				type: 'post',
+				success: function(resp)
+				{
+					alert('successfully uploaded image!');
+				}
+			});
+		}
 	</script>
 
-	<h3>Load Image With Background</h3>
+
+	<h2>Load Image With Background</h2>
 	The background cannot be modified, but will be part of the save (try the eraser):
 
 	<table><tr>
@@ -100,7 +113,8 @@
 	</tr><tr>
 		<td colspan="2">
 			<div>
-				<a href="javascript:saveImage2();">save image</a> 
+				<a href="javascript:saveImage2();">save image</a>
+				<input type="button" value="Upload Image" onclick="upload_image('wPaint2');"/>
 			</div><br/>
 		</td>
 	</tr></table>
