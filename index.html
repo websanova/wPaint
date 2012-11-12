@@ -113,7 +113,8 @@
 	</tr><tr>
 		<td colspan="2">
 			<div>
-				<a href="javascript:saveImage2();">save image</a>
+				<a href="javascript:saveImage2();">save image</a> | 
+				<a href="javascript:updateBg2();">update bg</a>
 				<input type="button" value="Upload Image" onclick="upload_image('wPaint2');"/>
 			</div><br/>
 		</td>
@@ -133,7 +134,12 @@
 
 			$("#canvasImage2").attr('src', imageData2);
 		}
-		
+
+		function updateBg2()
+		{
+			$("#wPaint2").wPaint("imageBg", 'images/demo/wPaint.jpg');
+		}
+
 	</script>
 </body>
 </html>

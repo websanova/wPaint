@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.8.0
+ * @version         Version 1.8.1
  *
  ******************************************/
 (function($)
@@ -32,6 +32,7 @@
 					if(option == 'clear') { data.clearAll(); }
 					else if(option == 'image' && settings === undefined) { values.push(data.getImage()); }
 					else if(option == 'image' && settings !== undefined) { data.setImage(settings, true); }
+					else if(option == 'imageBg' && settings !== undefined) { data.setBgImage(settings); }
 					else if($.fn.wPaint.defaultSettings[option] !== undefined)
 					{
 						if(settings !== undefined) { data.settings[option] = settings; }
@@ -275,15 +276,7 @@
 				$(this.canvasBg).attr('id', 'mofo').css({position: 'absolute', left: 0, top: 0}).attr('width', width).attr('height', height);
 			}
 				
-			var myImage = new Image();
-			myImage.src = data.toString();
-
-			$this.ctxBg.clearRect(0, 0, $this.canvasBg.width, $this.canvasBg.height);
-			
-			$(myImage).load(function()
-			{
-				$this.ctxBg.drawImage(myImage, 0, 0);
-			});
+			this.setBgImage(data);
 
 			return $(this.canvasBg);
 		},
@@ -631,6 +624,21 @@
 			$(myImage).load(function(){
 				$this.ctx.drawImage(myImage, 0, 0);
 				if(addUndo) { $this.addUndo(); }
+			});
+		},
+
+		setBgImage: function(data, addUndo)
+		{
+			var $this = this;
+
+			var myImage = new Image();
+			myImage.src = data.toString();
+
+			$this.ctxBg.clearRect(0, 0, $this.canvasBg.width, $this.canvasBg.height);
+			
+			$(myImage).load(function()
+			{
+				$this.ctxBg.drawImage(myImage, 0, 0);
 			});
 		},
 
