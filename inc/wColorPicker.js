@@ -8,7 +8,7 @@
  * @license         This wChar jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wColorPicker
- * @version         Version 1.3.1
+ * @version         Version 1.3.2
  *
  ******************************************/
 (function($)
@@ -131,7 +131,7 @@
 			//setup custom area
 			var custom = 
 			$('<div class="_wColorPicker_custom"></div>')
-			.append(this.appendColors($('<div class="_wColorPicker_noColor">'), ['transparent'], 1))
+			.append(this.appendColors($('<div class="_wColorPicker_noColor">'), [''], 1))
 			.append(this.customTarget)
 			.append(this.customInput)
 			//clear floats
@@ -360,7 +360,11 @@
 		
 		toHex: function(color)
 		{
-			if(color.substring(0,3) == 'rgb')
+			if(color.substring(0,4) === 'rgba')
+			{
+				hex = 'transparent';
+			}
+			else if(color.substring(0,3) === 'rgb')
 			{
 				var rgb = color.substring(4, color.length - 1).replace(/\s/g, '').split(',');
 				
@@ -374,9 +378,9 @@
 			}
 			else
 			{
-				hex = color;//color.substring(0, 1) == '#' ? color.substring(1, color.length) : color;
+				hex = color;
 			}
-			
+
 			return  hex;
 		},
 		
