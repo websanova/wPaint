@@ -82,7 +82,7 @@ Init with background (bg is saved with image but cannot be altered):
 <script type="text/javascript">
     $("#wPaint").wPaint({
         image: './some/path/imagepreload.png',
-        bgImage: './some/path/imagebg.png'
+        imageBg: './some/path/imagebg.png'
     });
 </script>
 ```
