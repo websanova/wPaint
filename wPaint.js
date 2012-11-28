@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.8.3
+ * @version         Version 1.8.4
  *
  ******************************************/
 (function($)
@@ -57,25 +57,25 @@
 		
 		return this.each(function()
 		{			
-			var elem = $(this);
-			var $settings = jQuery.extend(true, {}, settings);
+			var $elem = $(this);
+			var _settings = jQuery.extend(true, {}, settings);
 			
 			//test for HTML5 canvas
 			var test = document.createElement('canvas');
 			if(!test.getContext)
 			{
-				elem.html("Browser does not support HTML5 canvas, please upgrade to a more modern browser.");
+				$elem.html("Browser does not support HTML5 canvas, please upgrade to a more modern browser.");
 				return false;	
 			}
 			
-			var canvas = new Canvas($settings, elem);
+			var canvas = new Canvas(_settings, $elem);
 			canvas.mainMenu = new MainMenu();
 			canvas.textMenu = new TextMenu();
 			
-			if($settings.imageBg) elem.append(canvas.generateBg(elem.width(), elem.height(), $settings.imageBg));
-			elem.append(canvas.generate(elem.width(), elem.height()));
-			elem.append(canvas.generateTemp());
-			elem.append(canvas.generateTextInput());
+			if(_settings.imageBg) $elem.append(canvas.generateBg($elem.width(), $elem.height(), _settings.imageBg));
+			$elem.append(canvas.generate($elem.width(), $elem.height()));
+			$elem.append(canvas.generateTemp());
+			$elem.append(canvas.generateTextInput());
 			
 			$('body')
 			.append(canvas.mainMenu.generate(canvas, canvas.textMenu))
@@ -85,14 +85,14 @@
 			canvas.mainMenu.moveTextMenu(canvas.mainMenu, canvas.textMenu);
 
 			//init mode
-			canvas.mainMenu.set_mode(canvas.mainMenu, canvas, $settings.mode);
+			canvas.mainMenu.set_mode(canvas.mainMenu, canvas, _settings.mode);
 
 			//pull from css so that it is dynamic
 			var buttonSize = $("._wPaint_icon").outerHeight(true) - (parseInt($("._wPaint_icon").css('paddingTop').split('px')[0]) + parseInt($("._wPaint_icon").css('paddingBottom').split('px')[0]));
 
 			canvas.mainMenu.menu.find("._wPaint_fillColorPicker").wColorPicker({
 				mode: "click",
-				initColor: $settings.fillStyle,
+				initColor: _settings.fillStyle,
 				buttonSize: buttonSize,
 				showSpeed: 300,
 				hideSpeed: 300,
@@ -104,7 +104,7 @@
 			
 			canvas.mainMenu.menu.find("._wPaint_strokeColorPicker").wColorPicker({
 				mode: "click",
-				initColor: $settings.strokeStyle,
+				initColor: _settings.strokeStyle,
 				buttonSize: buttonSize,
 				showSpeed: 300,
 				hideSpeed: 300,
@@ -113,16 +113,16 @@
 				}
 			});
 			
-			if($settings.image)
+			if(_settings.image)
 			{
-				canvas.setImage($settings.image, true);
+				canvas.setImage(_settings.image, true);
 			}
 			else
 			{
 				canvas.addUndo();
 			}
 
-			elem.data('_wPaint', canvas);
+			$elem.data('_wPaint', canvas);
 		});
 	}
 
@@ -198,7 +198,7 @@
 			this.ctx = this.canvas.getContext('2d');
 			
 			//create local reference
-			var $this = this;
+			var _self = this;
 			
 			$(this.canvas)
 			.attr('width', width + 'px')
@@ -208,22 +208,22 @@
 			{
 				e.preventDefault();
 				e.stopPropagation();
-				$this.draw = true;
-				$this.callFunc(e, $this, 'Down');
+				_self.draw = true;
+				_self.callFunc(e, _self, 'Down');
 			});
 			
 			$(document)
 			.mousemove(function(e)
 			{
-				if($this.draw) $this.callFunc(e, $this, 'Move');
+				if(_self.draw) _self.callFunc(e, _self, 'Move');
 			})
 			.mouseup(function(e)
 			{
 				//make sure we are in draw mode otherwise this will fire on any mouse up.
-				if($this.draw)
+				if(_self.draw)
 				{
-					$this.draw = false;
-					$this.callFunc(e, $this, 'Up');
+					_self.draw = false;
+					_self.callFunc(e, _self, 'Up');
 				}
 			});
 			
@@ -266,7 +266,7 @@
 
 		generateBg: function(width, height, data)
 		{
-			var $this = this;
+			var _self = this;
 			
 			if(!this.canvasBg)
 			{
@@ -283,139 +283,139 @@
 		
 		generateTextInput: function()
 		{
-			var $this = this;
+			var _self = this;
 			
-			$this.textCalc = $('<div></div>').css({display:'none', fontSize:this.settings.fontSize, lineHeight:this.settings.fontSize+'px', fontFamily:this.settings.fontFamily});
+			_self.textCalc = $('<div></div>').css({display:'none', fontSize:this.settings.fontSize, lineHeight:this.settings.fontSize+'px', fontFamily:this.settings.fontFamily});
 			
-			$this.textInput = 
+			_self.textInput = 
 			$('<textarea class="_wPaint_textInput" spellcheck="false"></textarea>')
 			.css({display:'none', position:'absolute', color:this.settings.fillStyle, fontSize:this.settings.fontSize, lineHeight:this.settings.fontSize+'px', fontFamily:this.settings.fontFamily})
 
-			if($this.settings.fontTypeBold) { $this.textInput.css('fontWeight', 'bold'); $this.textCalc.css('fontWeight', 'bold'); }
-			if($this.settings.fontTypeItalic) { $this.textInput.css('fontStyle', 'italic'); $this.textCalc.css('fontStyle', 'italic'); }
-			if($this.settings.fontTypeUnderline) { $this.textInput.css('textDecoration', 'underline'); $this.textCalc.css('textDecoration', 'underline'); }
+			if(_self.settings.fontTypeBold) { _self.textInput.css('fontWeight', 'bold'); _self.textCalc.css('fontWeight', 'bold'); }
+			if(_self.settings.fontTypeItalic) { _self.textInput.css('fontStyle', 'italic'); _self.textCalc.css('fontStyle', 'italic'); }
+			if(_self.settings.fontTypeUnderline) { _self.textInput.css('textDecoration', 'underline'); _self.textCalc.css('textDecoration', 'underline'); }
 			
-			$('body').append($this.textCalc);
+			$('body').append(_self.textCalc);
 			
-			return $this.textInput;
+			return _self.textInput;
 		},
 		
-		callFunc: function(e, $this, event)
+		callFunc: function(e, _self, event)
 		{
 			$e = jQuery.extend(true, {}, e);
 			
-			var canvas_offset = $($this.canvas).offset();
+			var canvas_offset = $(_self.canvas).offset();
 			
 			$e.pageX = Math.floor($e.pageX - canvas_offset.left);
 			$e.pageY = Math.floor($e.pageY - canvas_offset.top);
 			
-			var mode = $.inArray($this.settings.mode, shapes) > -1 ? 'Shape' : $this.settings.mode;
-			var func = $this['draw' + mode + '' + event];	
+			var mode = $.inArray(_self.settings.mode, shapes) > -1 ? 'Shape' : _self.settings.mode;
+			var func = _self['draw' + mode + '' + event];	
 			
-			if(func) func($e, $this);
+			if(func) func($e, _self);
 
-			if($this.settings['draw' + event]) $this.settings['draw' + event].apply($this, [e, mode]);
+			if(_self.settings['draw' + event]) _self.settings['draw' + event].apply(_self, [e, mode]);
 
-			if($this.settings.mode !== 'Text' && event === 'Up') { this.addUndo(); }
+			if(_self.settings.mode !== 'Text' && event === 'Up') { this.addUndo(); }
 		},
 		
 		/*******************************************************************************
 		 * draw any shape
 		 *******************************************************************************/
-		drawShapeDown: function(e, $this)
+		drawShapeDown: function(e, _self)
 		{
-			if($this.settings.mode == 'Text')
+			if(_self.settings.mode == 'Text')
 			{
 				//draw current text before resizing next text box
-				if($this.textInput.val() != '') $this.drawTextUp(e, $this);
+				if(_self.textInput.val() != '') _self.drawTextUp(e, _self);
 				
-				$this.textInput.css({left: e.pageX-1, top: e.pageY-1, width:0, height:0});
+				_self.textInput.css({left: e.pageX-1, top: e.pageY-1, width:0, height:0});
 			}
 
-			$($this.canvasTemp)
+			$(_self.canvasTemp)
 			.css({left: e.pageX, top: e.pageY})
 			.attr('width', 0)
 			.attr('height', 0)
 			.show();
 
-			$this.canvasTempLeftOriginal = e.pageX;
-			$this.canvasTempTopOriginal = e.pageY;
+			_self.canvasTempLeftOriginal = e.pageX;
+			_self.canvasTempTopOriginal = e.pageY;
 			
-			var func = $this['draw' + $this.settings.mode + 'Down'];
+			var func = _self['draw' + _self.settings.mode + 'Down'];
 			
-			if(func) func(e, $this);
+			if(func) func(e, _self);
 		},
 		
-		drawShapeMove: function(e, $this)
+		drawShapeMove: function(e, _self)
 		{
-			var xo = $this.canvasTempLeftOriginal;
-			var yo = $this.canvasTempTopOriginal;
+			var xo = _self.canvasTempLeftOriginal;
+			var yo = _self.canvasTempTopOriginal;
 			
-			var half_line_width = $this.settings.lineWidth / 2;
+			var half_line_width = _self.settings.lineWidth / 2;
 			
-			var left = (e.pageX < xo ? e.pageX : xo) - ($this.settings.mode == 'Line' ? Math.floor(half_line_width) : 0);
-			var top = (e.pageY < yo ? e.pageY : yo) - ($this.settings.mode == 'Line' ? Math.floor(half_line_width) : 0);
-			var width = Math.abs(e.pageX - xo) + ($this.settings.mode == 'Line' ? $this.settings.lineWidth : 0);
-			var height = Math.abs(e.pageY - yo) + ($this.settings.mode == 'Line' ? $this.settings.lineWidth : 0);
+			var left = (e.pageX < xo ? e.pageX : xo) - (_self.settings.mode == 'Line' ? Math.floor(half_line_width) : 0);
+			var top = (e.pageY < yo ? e.pageY : yo) - (_self.settings.mode == 'Line' ? Math.floor(half_line_width) : 0);
+			var width = Math.abs(e.pageX - xo) + (_self.settings.mode == 'Line' ? _self.settings.lineWidth : 0);
+			var height = Math.abs(e.pageY - yo) + (_self.settings.mode == 'Line' ? _self.settings.lineWidth : 0);
 
-			$($this.canvasTemp)
+			$(_self.canvasTemp)
 			.css({left: left, top: top})
 			.attr('width', width)
 			.attr('height', height)
 			
-			if($this.settings.mode == 'Text') $this.textInput.css({left: left-1, top: top-1, width:width, height:height});
+			if(_self.settings.mode == 'Text') _self.textInput.css({left: left-1, top: top-1, width:width, height:height});
 			
-			$this.canvasTempLeftNew = left;
-			$this.canvasTempTopNew = top;
+			_self.canvasTempLeftNew = left;
+			_self.canvasTempTopNew = top;
 			
-			var func = $this['draw' + $this.settings.mode + 'Move'];
+			var func = _self['draw' + _self.settings.mode + 'Move'];
 			
 			if(func)
 			{
-			    var factor = $this.settings.mode == 'Line' ? 1 : 2;
+			    var factor = _self.settings.mode == 'Line' ? 1 : 2;
 			    
 				e.x = half_line_width*factor;
 				e.y = half_line_width*factor;
-				e.w = width - $this.settings.lineWidth*factor;
-				e.h = height - $this.settings.lineWidth*factor;
+				e.w = width - _self.settings.lineWidth*factor;
+				e.h = height - _self.settings.lineWidth*factor;
 				
-				$this.ctxTemp.fillStyle = $this.settings.fillStyle;
-				$this.ctxTemp.strokeStyle = $this.settings.strokeStyle;
-				$this.ctxTemp.lineWidth = $this.settings.lineWidth*factor;
+				_self.ctxTemp.fillStyle = _self.settings.fillStyle;
+				_self.ctxTemp.strokeStyle = _self.settings.strokeStyle;
+				_self.ctxTemp.lineWidth = _self.settings.lineWidth*factor;
 				
-				func(e, $this);
+				func(e, _self);
 			}
 		},
 		
-		drawShapeUp: function(e, $this)
+		drawShapeUp: function(e, _self)
 		{
-			if($this.settings.mode != 'Text')
+			if(_self.settings.mode != 'Text')
 			{
-				$this.ctx.drawImage($this.canvasTemp ,$this.canvasTempLeftNew, $this.canvasTempTopNew);
+				_self.ctx.drawImage(_self.canvasTemp ,_self.canvasTempLeftNew, _self.canvasTempTopNew);
 				
-				$($this.canvasTemp).hide();
+				$(_self.canvasTemp).hide();
 				
-				var func = $this['draw' + $this.settings.mode + 'Up'];
-				if(func) func(e, $this);
+				var func = _self['draw' + _self.settings.mode + 'Up'];
+				if(func) func(e, _self);
 			}
 		},
 		
 		/*******************************************************************************
 		 * draw rectangle
 		 *******************************************************************************/		
-		drawRectangleMove: function(e, $this)
+		drawRectangleMove: function(e, _self)
 		{
-			$this.ctxTemp.beginPath();
-			$this.ctxTemp.rect(e.x, e.y, e.w, e.h)
-			$this.ctxTemp.closePath();
-			$this.ctxTemp.stroke();
-			$this.ctxTemp.fill();
+			_self.ctxTemp.beginPath();
+			_self.ctxTemp.rect(e.x, e.y, e.w, e.h)
+			_self.ctxTemp.closePath();
+			_self.ctxTemp.stroke();
+			_self.ctxTemp.fill();
 		},
 		
 		/*******************************************************************************
 		 * draw ellipse
 		 *******************************************************************************/
-		drawEllipseMove: function(e, $this)
+		drawEllipseMove: function(e, _self)
 		{
 			var kappa = .5522848;
 			var ox = (e.w / 2) * kappa; 	// control point offset horizontal
@@ -425,150 +425,150 @@
 			var xm = e.x + e.w / 2;       	// x-middle
 			var ym = e.y + e.h / 2;       	// y-middle
 		
-			$this.ctxTemp.beginPath();
-			$this.ctxTemp.moveTo(e.x, ym);
-			$this.ctxTemp.bezierCurveTo(e.x, ym - oy, xm - ox, e.y, xm, e.y);
-			$this.ctxTemp.bezierCurveTo(xm + ox, e.y, xe, ym - oy, xe, ym);
-			$this.ctxTemp.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-			$this.ctxTemp.bezierCurveTo(xm - ox, ye, e.x, ym + oy, e.x, ym);
-			$this.ctxTemp.closePath();
-			if($this.settings.lineWidth > 0)$this.ctxTemp.stroke();
-			$this.ctxTemp.fill();
+			_self.ctxTemp.beginPath();
+			_self.ctxTemp.moveTo(e.x, ym);
+			_self.ctxTemp.bezierCurveTo(e.x, ym - oy, xm - ox, e.y, xm, e.y);
+			_self.ctxTemp.bezierCurveTo(xm + ox, e.y, xe, ym - oy, xe, ym);
+			_self.ctxTemp.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+			_self.ctxTemp.bezierCurveTo(xm - ox, ye, e.x, ym + oy, e.x, ym);
+			_self.ctxTemp.closePath();
+			if(_self.settings.lineWidth > 0)_self.ctxTemp.stroke();
+			_self.ctxTemp.fill();
 		},
 		
 		/*******************************************************************************
 		 * draw line
 		 *******************************************************************************/	
-		drawLineMove: function(e, $this)
+		drawLineMove: function(e, _self)
 		{				
-			var xo = $this.canvasTempLeftOriginal;
-			var yo = $this.canvasTempTopOriginal;
+			var xo = _self.canvasTempLeftOriginal;
+			var yo = _self.canvasTempTopOriginal;
 			
 			if(e.pageX < xo) { e.x = e.x + e.w; e.w = e.w * -1}
 			if(e.pageY < yo) { e.y = e.y + e.h; e.h = e.h * -1}
 			
-			$this.ctxTemp.lineJoin = "round";
-			$this.ctxTemp.beginPath();
-			$this.ctxTemp.moveTo(e.x, e.y);
-			$this.ctxTemp.lineTo(e.x + e.w, e.y + e.h);
-			$this.ctxTemp.closePath();
-			$this.ctxTemp.stroke();
+			_self.ctxTemp.lineJoin = "round";
+			_self.ctxTemp.beginPath();
+			_self.ctxTemp.moveTo(e.x, e.y);
+			_self.ctxTemp.lineTo(e.x + e.w, e.y + e.h);
+			_self.ctxTemp.closePath();
+			_self.ctxTemp.stroke();
 		},
 		
 		/*******************************************************************************
 		 * draw pencil
 		 *******************************************************************************/
-		drawPencilDown: function(e, $this)
+		drawPencilDown: function(e, _self)
 		{
-			$this.ctx.lineJoin = "round";
-			$this.ctx.lineCap = "round";
-			$this.ctx.strokeStyle = $this.settings.strokeStyle;
-			$this.ctx.fillStyle = $this.settings.strokeStyle;
-			$this.ctx.lineWidth = $this.settings.lineWidth;
+			_self.ctx.lineJoin = "round";
+			_self.ctx.lineCap = "round";
+			_self.ctx.strokeStyle = _self.settings.strokeStyle;
+			_self.ctx.fillStyle = _self.settings.strokeStyle;
+			_self.ctx.lineWidth = _self.settings.lineWidth;
 			
 			//draw single dot in case of a click without a move
-			$this.ctx.beginPath();
-			$this.ctx.arc(e.pageX, e.pageY, $this.settings.lineWidth/2, 0, Math.PI*2, true);
-			$this.ctx.closePath();
-			$this.ctx.fill();
+			_self.ctx.beginPath();
+			_self.ctx.arc(e.pageX, e.pageY, _self.settings.lineWidth/2, 0, Math.PI*2, true);
+			_self.ctx.closePath();
+			_self.ctx.fill();
 			
 			//start the path for a drag
-			$this.ctx.beginPath();
-			$this.ctx.moveTo(e.pageX, e.pageY);
+			_self.ctx.beginPath();
+			_self.ctx.moveTo(e.pageX, e.pageY);
 		},
 		
-		drawPencilMove: function(e, $this)
+		drawPencilMove: function(e, _self)
 		{
-			$this.ctx.lineTo(e.pageX, e.pageY);
-			$this.ctx.stroke();
+			_self.ctx.lineTo(e.pageX, e.pageY);
+			_self.ctx.stroke();
 		},
 		
-		drawPencilUp: function(e, $this)
+		drawPencilUp: function(e, _self)
 		{
-			$this.ctx.closePath();
+			_self.ctx.closePath();
 		},
 
 		/*******************************************************************************
 		 * draw text
 		 *******************************************************************************/
 		
-		drawTextDown: function(e, $this)
+		drawTextDown: function(e, _self)
 		{
-			$this.textInput.val('').show().focus();
+			_self.textInput.val('').show().focus();
 		},
 		
-		drawTextUp: function(e, $this)
+		drawTextUp: function(e, _self)
 		{
 			if(e) { this.addUndo(); }
 
 			var fontString = '';
-			if($this.settings.fontTypeItalic) fontString += 'italic ';
-			//if($this.settings.fontTypeUnderline) fontString += 'underline ';
-			if($this.settings.fontTypeBold) fontString += 'bold ';
+			if(_self.settings.fontTypeItalic) fontString += 'italic ';
+			//if(_self.settings.fontTypeUnderline) fontString += 'underline ';
+			if(_self.settings.fontTypeBold) fontString += 'bold ';
 			
-			fontString += $this.settings.fontSize + 'px ' + $this.settings.fontFamily;
+			fontString += _self.settings.fontSize + 'px ' + _self.settings.fontFamily;
 			
 			//setup lines
-			var lines = $this.textInput.val().split('\n');
+			var lines = _self.textInput.val().split('\n');
 			var linesNew = [];
-			var textInputWidth = $this.textInput.width() - 2;
+			var textInputWidth = _self.textInput.width() - 2;
 			
 			var width = 0;
 			var lastj = 0;
 			
 			for(var i=0, ii=lines.length; i<ii; i++)
 			{
-				$this.textCalc.html('');
+				_self.textCalc.html('');
 				lastj = 0;
 				
 				for(var j=0, jj=lines[0].length; j<jj; j++)
 				{
-					width = $this.textCalc.append(lines[i][j]).width();
+					width = _self.textCalc.append(lines[i][j]).width();
 					
 					if(width > textInputWidth)
 					{
 						linesNew.push(lines[i].substring(lastj,j));
 						lastj = j;
-						$this.textCalc.html(lines[i][j]);
+						_self.textCalc.html(lines[i][j]);
 					}
 				}
 				
 				if(lastj != j) linesNew.push(lines[i].substring(lastj,j));
 			}
 			
-			lines = $this.textInput.val(linesNew.join('\n')).val().split('\n');
+			lines = _self.textInput.val(linesNew.join('\n')).val().split('\n');
 			
-			var offset = $this.textInput.position();
+			var offset = _self.textInput.position();
 			var left = offset.left;
 			var top = offset.top;
 			var underlineOffset = 0;
 			
 			for(var i=0, ii=lines.length; i<ii; i++)
 			{
-				$this.ctx.fillStyle = $this.settings.fillStyle;
+				_self.ctx.fillStyle = _self.settings.fillStyle;
 				
-				$this.ctx.textBaseline = 'top';
-				$this.ctx.font = fontString;
-				$this.ctx.fillText(lines[i], left, top);
+				_self.ctx.textBaseline = 'top';
+				_self.ctx.font = fontString;
+				_self.ctx.fillText(lines[i], left, top);
 				
-				top += $this.settings.fontSize;
+				top += _self.settings.fontSize;
 				
-				if(lines[i] != '' && $this.settings.fontTypeUnderline)
+				if(lines[i] != '' && _self.settings.fontTypeUnderline)
 				{
-					width = $this.textCalc.html(lines[i]).width();
+					width = _self.textCalc.html(lines[i]).width();
 					
 					//manually set pixels for underline since to avoid antialiasing 1px issue, and lack of support for underline in canvas
-					var imgData = $this.ctx.getImageData(0, top+underlineOffset, width, 1);
+					var imgData = _self.ctx.getImageData(0, top+underlineOffset, width, 1);
 					
 					for (j=0; j<imgData.width*imgData.height*4; j+=4)
 					{
-						imgData.data[j] = parseInt($this.settings.fillStyle.substring(1,3), 16);
-						imgData.data[j+1] = parseInt($this.settings.fillStyle.substring(3,5), 16);
-						imgData.data[j+2] = parseInt($this.settings.fillStyle.substring(5,7), 16);
+						imgData.data[j] = parseInt(_self.settings.fillStyle.substring(1,3), 16);
+						imgData.data[j+1] = parseInt(_self.settings.fillStyle.substring(3,5), 16);
+						imgData.data[j+2] = parseInt(_self.settings.fillStyle.substring(5,7), 16);
 						imgData.data[j+3] = 255;
 					}
 					
-					$this.ctx.putImageData(imgData, left, top+underlineOffset);
+					_self.ctx.putImageData(imgData, left, top+underlineOffset);
 				}
 			}
 		},
@@ -576,22 +576,22 @@
 		/*******************************************************************************
 		 * eraser
 		 *******************************************************************************/
-		drawEraserDown: function(e, $this)
+		drawEraserDown: function(e, _self)
 		{
-			$this.ctx.save();
-			$this.ctx.globalCompositeOperation = 'destination-out';
-			$this.drawPencilDown(e, $this);
+			_self.ctx.save();
+			_self.ctx.globalCompositeOperation = 'destination-out';
+			_self.drawPencilDown(e, _self);
 		},
 		
-		drawEraserMove: function(e, $this)
+		drawEraserMove: function(e, _self)
 		{
-		    $this.drawPencilMove(e, $this);
+		    _self.drawPencilMove(e, _self);
 		},
 		
-		drawEraserUp: function(e, $this)
+		drawEraserUp: function(e, _self)
 		{
-			$this.drawPencilUp(e, $this);
-			$this.ctx.restore();
+			_self.drawPencilUp(e, _self);
+			_self.ctx.restore();
 		},
 
 		/*******************************************************************************
@@ -614,31 +614,31 @@
 		
 		setImage: function(data, addUndo)
 		{
-			var $this = this;
+			var _self = this;
 			
 			var myImage = new Image();
 			myImage.src = data.toString();
 
-			$this.ctx.clearRect(0, 0, $this.canvas.width, $this.canvas.height);
+			_self.ctx.clearRect(0, 0, _self.canvas.width, _self.canvas.height);
 			
 			$(myImage).load(function(){
-				$this.ctx.drawImage(myImage, 0, 0);
-				if(addUndo) { $this.addUndo(); }
+				_self.ctx.drawImage(myImage, 0, 0);
+				if(addUndo) { _self.addUndo(); }
 			});
 		},
 
 		setBgImage: function(data, addUndo)
 		{
-			var $this = this;
+			var _self = this;
 
 			var myImage = new Image();
 			myImage.src = data.toString();
 
-			$this.ctxBg.clearRect(0, 0, $this.canvasBg.width, $this.canvasBg.height);
+			_self.ctxBg.clearRect(0, 0, _self.canvasBg.width, _self.canvasBg.height);
 			
 			$(myImage).load(function()
 			{
-				$this.ctxBg.drawImage(myImage, 0, 0);
+				_self.ctxBg.drawImage(myImage, 0, 0);
 			});
 		},
 
@@ -733,7 +733,7 @@
 		{
 			var $canvas = canvas;
 			this.textMenu = textMenu;
-			var $this = this;
+			var _self = this;
 			
 			//setup the line width select
 			var options = '';
@@ -753,12 +753,12 @@
 				{
 					case 'undo': menuContent.append($('<div class="_wPaint_icon _wPaint_undo" title="undo"></div>').click(function(){ $canvas.undoPrev(); })).append($('<div class="_wPaint_icon _wPaint_redo" title="redo"></div>').click(function(){ $canvas.undoNext(); })); break;
 					case 'clear': menuContent.append($('<div class="_wPaint_icon _wPaint_clear" title="clear"></div>').click(function(){ $canvas.clearAll(); })); break;
-					case 'rectangle': menuContent.append($('<div class="_wPaint_icon _wPaint_rectangle" title="rectangle"></div>').click(function(){ $this.set_mode($this, $canvas, 'Rectangle'); })); break;
-					case 'ellipse': menuContent.append($('<div class="_wPaint_icon _wPaint_ellipse" title="ellipse"></div>').click(function(){ $this.set_mode($this, $canvas, 'Ellipse'); })); break;
-					case 'line': menuContent.append($('<div class="_wPaint_icon _wPaint_line" title="line"></div>').click(function(){ $this.set_mode($this, $canvas, 'Line'); })); break;
-					case 'pencil': menuContent.append($('<div class="_wPaint_icon _wPaint_pencil" title="pencil"></div>').click(function(){ $this.set_mode($this, $canvas, 'Pencil'); })); break;
-					case 'text': menuContent.append($('<div class="_wPaint_icon _wPaint_text" title="text"></div>').click(function(){ $this.set_mode($this, $canvas, 'Text'); })); break;
-					case 'eraser': menuContent.append($('<div class="_wPaint_icon _wPaint_eraser" title="eraser"></div>').click(function(e){ $this.set_mode($this, $canvas, 'Eraser'); })); break;
+					case 'rectangle': menuContent.append($('<div class="_wPaint_icon _wPaint_rectangle" title="rectangle"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Rectangle'); })); break;
+					case 'ellipse': menuContent.append($('<div class="_wPaint_icon _wPaint_ellipse" title="ellipse"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Ellipse'); })); break;
+					case 'line': menuContent.append($('<div class="_wPaint_icon _wPaint_line" title="line"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Line'); })); break;
+					case 'pencil': menuContent.append($('<div class="_wPaint_icon _wPaint_pencil" title="pencil"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Pencil'); })); break;
+					case 'text': menuContent.append($('<div class="_wPaint_icon _wPaint_text" title="text"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Text'); })); break;
+					case 'eraser': menuContent.append($('<div class="_wPaint_icon _wPaint_eraser" title="eraser"></div>').click(function(e){ _self.set_mode(_self, $canvas, 'Eraser'); })); break;
 					case 'fillColor': menuContent.append($('<div class="_wPaint_fillColorPicker _wPaint_colorPicker" title="fill color"></div>')); break;
 					case 'lineWidth': menuContent.append(lineWidth); break;
 					case 'strokeColor': menuContent.append($('<div class="_wPaint_strokeColorPicker _wPaint_colorPicker" title="stroke color"></div>')); break;
@@ -777,8 +777,8 @@
 			.css({position: 'absolute', left: offset.left + 5, top: offset.top + 5})
 			.draggable({
 				handle: menuHandle, 
-				drag: function(){$this.moveTextMenu($this, $this.textMenu)}, 
-				stop: function(){$this.moveTextMenu($this, $this.textMenu)}
+				drag: function(){_self.moveTextMenu(_self, _self.textMenu)}, 
+				stop: function(){_self.moveTextMenu(_self, _self.textMenu)}
 			})
 			.append(menuHandle)
 			.append(menuContent);
@@ -792,20 +792,20 @@
 			}
 		},
 		
-		set_mode: function($this, $canvas, mode)
+		set_mode: function(_self, $canvas, mode)
 		{
 			$canvas.settings.mode = mode;
 			
-			if(mode == 'Text') $this.textMenu.menu.show();
+			if(mode == 'Text') _self.textMenu.menu.show();
 			else
 			{
 				$canvas.drawTextUp(null, $canvas);
-				$this.textMenu.menu.hide();
+				_self.textMenu.menu.hide();
 				$canvas.textInput.hide();
 			}
 			
-			$this.menu.find("._wPaint_icon").removeClass('active');
-			$this.menu.find("._wPaint_" + mode.toLowerCase()).addClass('active');
+			_self.menu.find("._wPaint_icon").removeClass('active');
+			_self.menu.find("._wPaint_" + mode.toLowerCase()).addClass('active');
 		}
 	}
 	
@@ -829,7 +829,7 @@
 		generate: function(canvas, mainMenu)
 		{
 			var $canvas = canvas;
-			var $this = this;
+			var _self = this;
 			
 			//setup font sizes
 			var options = '';
@@ -862,9 +862,9 @@
 			//content
 			var menuContent = 
 			$('<div class="_wPaint_options"></div>')
-			.append($('<div class="_wPaint_icon _wPaint_bold ' + ($canvas.settings.fontTypeBold ? 'active' : '') + '" title="bold"></div>').click(function(){ $this.setType($this, $canvas, 'Bold'); }))
-			.append($('<div class="_wPaint_icon _wPaint_italic ' + ($canvas.settings.fontTypeItalic ? 'active' : '') + '" title="italic"></div>').click(function(){ $this.setType($this, $canvas, 'Italic'); }))
-			.append($('<div class="_wPaint_icon _wPaint_underline ' + ($canvas.settings.fontTypeUnderline ? 'active' : '') + '" title="underline"></div>').click(function(){ $this.setType($this, $canvas, 'Underline'); }))
+			.append($('<div class="_wPaint_icon _wPaint_bold ' + ($canvas.settings.fontTypeBold ? 'active' : '') + '" title="bold"></div>').click(function(){ _self.setType(_self, $canvas, 'Bold'); }))
+			.append($('<div class="_wPaint_icon _wPaint_italic ' + ($canvas.settings.fontTypeItalic ? 'active' : '') + '" title="italic"></div>').click(function(){ _self.setType(_self, $canvas, 'Italic'); }))
+			.append($('<div class="_wPaint_icon _wPaint_underline ' + ($canvas.settings.fontTypeUnderline ? 'active' : '') + '" title="underline"></div>').click(function(){ _self.setType(_self, $canvas, 'Underline'); }))
 			.append(fontSize)
 			.append(fontFamily)
 			
@@ -883,9 +883,9 @@
 				handle: menuHandle,
 				stop: function(){
 					$.each($(this).data('draggable').snapElements, function(index, element){
-						$this.dockOffsetLeft = $this.menu.offset().left - mainMenu.menu.offset().left;
-						$this.dockOffsetTop = $this.menu.offset().top - mainMenu.menu.offset().top;
-						$this.docked = element.snapping;
+						_self.dockOffsetLeft = _self.menu.offset().left - mainMenu.menu.offset().left;
+						_self.dockOffsetTop = _self.menu.offset().top - mainMenu.menu.offset().top;
+						_self.docked = element.snapping;
 					}); 
 				}
 			})
@@ -893,9 +893,9 @@
 			.append(menuContent);
 		},
 		
-		setType: function($this, $canvas, mode)
+		setType: function(_self, $canvas, mode)
 		{
-			var element = $this.menu.find("._wPaint_" + mode.toLowerCase());
+			var element = _self.menu.find("._wPaint_" + mode.toLowerCase());
 			var isActive = element.hasClass('active')
 			
 			$canvas.settings['fontType' + mode] = !isActive;
