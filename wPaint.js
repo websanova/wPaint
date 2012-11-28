@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.8.4
+ * @version         Version 1.9.0
  *
  ******************************************/
 (function($)
@@ -68,6 +68,8 @@
 				return false;	
 			}
 			
+			if($elem.data('_wPaint')) return false;
+
 			var canvas = new Canvas(_settings, $elem);
 			canvas.mainMenu = new MainMenu();
 			canvas.textMenu = new TextMenu();
