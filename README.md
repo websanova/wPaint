@@ -42,8 +42,15 @@ $('#elem').wPaint('image', '/path/to/file.jpg');
 Retrieve settings, if more than one it will return an array otherwise just the value.
 
 ```javascript
-console.log($('#elem').wPaint('strokeStyle'))            // #FFFF00
-console.log($('.elem').wPaint('strokeStyle'))            // ['#FFFF00', '#FFFF00']
+console.log($('#elem').wPaint('strokeStyle'));            // #FFFF00
+console.log($('.elem').wPaint('strokeStyle'));            // ['#FFFF00', '#FFFF00']
+```
+
+Retrieve paint object.
+
+```javascript
+var wp = $('#wPaint').wPaint().data('_wPaint');
+console.log(wp);                                          // {wPaint object}
 ```
 
 
