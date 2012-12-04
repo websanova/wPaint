@@ -28,7 +28,9 @@ $('#elem').wPaint({
     drawDown            : null,             // function to call when start a draw
     drawMove            : null,             // function to call during a draw
     drawUp              : null,             // function to call at end of draw
-    menu                : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'] // menu items - appear in order they are set
+    menu                : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+    menuOffsetX         : 5,                // offset for menu (left)
+    menuOffsetY         : 5                 // offset for menu (top)
 });
 ```
 

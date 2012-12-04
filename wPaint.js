@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.9.0
+ * @version         Version 1.10.0
  *
  ******************************************/
 (function($)
@@ -150,7 +150,9 @@
 		drawDown			: null,				// function to call when start a draw
 		drawMove			: null,				// function to call during a draw
 		drawUp				: null,				// function to call at end of draw
-		menu 				: ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'] // menu items - appear in order they are set
+		menu 				: ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+		menuOffsetX			: 5,				// offset for menu (left)
+		menuOffsetY			: 5					// offset for menu (top)
 	};
 
 	/**
@@ -776,7 +778,7 @@
 			//menu
 			return this.menu = 
 			$('<div class="_wPaint_menu"></div>')
-			.css({position: 'absolute', left: offset.left + 5, top: offset.top + 5})
+			.css({position: 'absolute', left: offset.left + $canvas.settings.menuOffsetX, top: offset.top + $canvas.settings.menuOffsetY})
 			.draggable({
 				handle: menuHandle, 
 				drag: function(){_self.moveTextMenu(_self, _self.textMenu)}, 
