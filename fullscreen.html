@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Websanova Paint</title>
+	
+	<!-- jQuery -->
+	<script type="text/javascript" src="./inc/jquery.1.8.2.min.js"></script>
+	<script type="text/javascript" src="./inc/jquery.ui.core.min.js"></script>
+	<script type="text/javascript" src="./inc/jquery.ui.widget.min.js"></script>
+	<script type="text/javascript" src="./inc/jquery.ui.mouse.min.js"></script>
+	<script type="text/javascript" src="./inc/jquery.ui.draggable.min.js"></script>
+	
+	<!-- wColorPicker -->
+	<link rel="Stylesheet" type="text/css" href="./inc/wColorPicker.css" />
+	<script type="text/javascript" src="./inc/wColorPicker.js"></script>
+	
+	<!-- wPaint -->
+	<link rel="Stylesheet" type="text/css" href="./wPaint.css" />
+	<script type="text/javascript" src="./wPaint.js"></script>
+	
+	<style>
+		body, html{margin:0px;}
+	</style>
+
+	<script type="text/javascript">
+		$(window).resize(function()
+		{
+			var width = $(window).width();
+			var height = $(window).height();
+
+			$('#wPaint').css({
+				width: width,
+				height: height
+			});
+
+			var wp = $("#wPaint").data('_wPaint');
+
+			//var imageData = $("#wPaint").wPaint("image"); // if you want to maintain the image after resizing the canvas
+
+			$(wp.canvas).attr('width', width + 'px').attr('height', height + 'px');
+
+			//$("#wPaint").wPaint("image", imageData);
+		})
+
+		$(document).ready(function(){ $(window).resize(); });
+	</script>
+</head>
+<body>
+	<div id="wPaint" style="position:relative; width:200px; height:200px; background:#CACACA;"></div>
+
+
+	<script>
+		$("#wPaint").wPaint();
+	</script>
+</body>
+</html>
