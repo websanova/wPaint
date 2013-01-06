@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.11.0
+ * @version         Version 1.12.0
  *
  ******************************************/
 (function($)
@@ -135,28 +135,29 @@
 	var shapes = ['Rectangle', 'Ellipse', 'Line', 'Text'];
 
 	$.fn.wPaint.defaultSettings = {
-		mode				: 'Pencil',			// drawing mode - Rectangle, Ellipse, Line, Pencil, Eraser
-		lineWidthMin		: '0', 				// line width min for select drop down
-		lineWidthMax		: '10',				// line widh max for select drop down
-		lineWidth			: '2', 				// starting line width
-		fillStyle			: '#FFFFFF',		// starting fill style
-		strokeStyle			: '#FFFF00',		// start stroke style
-		fontSizeMin			: '8',				// min font size in px
-		fontSizeMax			: '20',				// max font size in px
-		fontSize			: '12',				// current font size for text input
-		fontFamilyOptions	: ['Arial', 'Courier', 'Times', 'Trebuchet', 'Verdana'], // available font families
-		fontFamily			: 'Arial',			// active font family for text input
-		fontTypeBold		: false,			// text input bold enable/disable
-		fontTypeItalic		: false,			// text input italic enable/disable
-		fontTypeUnderline	: false,			// text input italic enable/disable
-		image				: null,				// preload image - base64 encoded data
-		imageBg				: null,				// preload image bg, cannot be altered but saved with image
-		drawDown			: null,				// function to call when start a draw
-		drawMove			: null,				// function to call during a draw
-		drawUp				: null,				// function to call at end of draw
-		menu 				: ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
-		menuOffsetX			: 5,				// offset for menu (left)
-		menuOffsetY			: 5					// offset for menu (top)
+		mode				 : 'Pencil',			// drawing mode - Rectangle, Ellipse, Line, Pencil, Eraser
+		lineWidthMin		 : '0', 				// line width min for select drop down
+		lineWidthMax		 : '10',				// line widh max for select drop down
+		lineWidth			 : '2', 				// starting line width
+		fillStyle			 : '#FFFFFF',		// starting fill style
+		strokeStyle			 : '#FFFF00',		// start stroke style
+		fontSizeMin			 : '8',				// min font size in px
+		fontSizeMax			 : '20',				// max font size in px
+		fontSize			 : '12',				// current font size for text input
+		fontFamilyOptions	 : ['Arial', 'Courier', 'Times', 'Trebuchet', 'Verdana'], // available font families
+		fontFamily			 : 'Arial',			// active font family for text input
+		fontTypeBold		 : false,			// text input bold enable/disable
+		fontTypeItalic		 : false,			// text input italic enable/disable
+		fontTypeUnderline	 : false,			// text input italic enable/disable
+		image				 : null,				// preload image - base64 encoded data
+		imageBg				 : null,				// preload image bg, cannot be altered but saved with image
+		drawDown			 : null,				// function to call when start a draw
+		drawMove			 : null,				// function to call during a draw
+		drawUp				 : null,				// function to call at end of draw
+		menu 				 : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+		menuOffsetX			 : 5,				// offset for menu (left)
+		menuOffsetY			 : 5,				// offset for menu (top)
+		disableMobileDefaults: false            // disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
 	};
 
 	/**
@@ -260,6 +261,9 @@
 				first.target.dispatchEvent(simulatedEvent);
 				event.preventDefault();
 			});
+
+			//eliminate browser defaults for
+			if(this.settings.disableMobileDefaults) $(document).bind('touchmove', function(e) { e.preventDefault(); });
 		},
 		
 		generateTemp: function()
