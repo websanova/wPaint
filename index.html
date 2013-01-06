@@ -26,7 +26,7 @@
 
 	<table><tr>
 		<td>
-			<div id="wPaint" style="position:relative; width:500px; height:300px; background:#CACACA; border:solid black 1px; overflow:hidden;"></div>
+			<div id="wPaint" style="position:relative; width:500px; height:300px; background:#CACACA; border:solid black 1px;"></div>
 		</td><td>
 			<img id="canvasImage" src=""/>
 		</td>
@@ -55,8 +55,6 @@
 			drawMove: function(e, mode){ $("#canvasMove").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
 			drawUp: function(e, mode){ $("#canvasUp").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); }
 		}).data('_wPaint');
-
-		console.log(wp);
 		
 		function loadImage_base64()
 		{
@@ -108,7 +106,7 @@
 
 	<table><tr>
 		<td>
-			<div id="wPaint2" style="position:relative; width:500px; height:300px; background:#CACACA; border:solid black 1px; overflow:hidden;"></div>
+			<div id="wPaint2" style="position:relative; width:500px; height:300px; background:#CACACA; border:solid black 1px;"></div>
 		</td><td>
 			<img id="canvasImage2" src=""/>
 		</td>

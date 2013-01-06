@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.10.0
+ * @version         Version 1.11.0
  *
  ******************************************/
 (function($)
@@ -78,8 +78,8 @@
 			$elem.append(canvas.generate($elem.width(), $elem.height()));
 			$elem.append(canvas.generateTemp());
 			$elem.append(canvas.generateTextInput());
-			
-			$('body')
+
+			$elem
 			.append(canvas.mainMenu.generate(canvas, canvas.textMenu))
 			.append(canvas.textMenu.generate(canvas, canvas.mainMenu));
 
@@ -115,6 +115,10 @@
 				}
 			});
 			
+			//must set width after append to get proper dimensions
+			canvas.mainMenu.setWidth(canvas.mainMenu.menu);
+			canvas.mainMenu.setWidth(canvas.textMenu.menu);
+
 			if(_settings.image)
 			{
 				canvas.setImage(_settings.image, true);
@@ -773,12 +777,12 @@
 			var menuHandle = $('<div class="_wPaint_handle"></div>')
 			
 			//get position of canvas
-			var offset = $($canvas.canvas).offset();
+			//var offset = $($canvas.canvas).offset();
 			
 			//menu
 			return this.menu = 
 			$('<div class="_wPaint_menu"></div>')
-			.css({position: 'absolute', left: offset.left + $canvas.settings.menuOffsetX, top: offset.top + $canvas.settings.menuOffsetY})
+			.css({position: 'absolute', left: $canvas.settings.menuOffsetX, top: $canvas.settings.menuOffsetY})
 			.draggable({
 				handle: menuHandle, 
 				drag: function(){_self.moveTextMenu(_self, _self.textMenu)}, 
@@ -800,7 +804,11 @@
 		{
 			$canvas.settings.mode = mode;
 			
-			if(mode == 'Text') _self.textMenu.menu.show();
+			if(mode == 'Text')
+			{
+				_self.textMenu.menu.show();
+				_self.setWidth(_self.textMenu.menu);
+			}
 			else
 			{
 				$canvas.drawTextUp(null, $canvas);
@@ -810,6 +818,19 @@
 			
 			_self.menu.find("._wPaint_icon").removeClass('active');
 			_self.menu.find("._wPaint_" + mode.toLowerCase()).addClass('active');
+		},
+
+		setWidth: function(menu)
+		{
+			var width = menu.find('._wPaint_handle').outerWidth(true);
+			width += menu.outerWidth(true) - menu.width();
+			
+			menu.find('._wPaint_options').children().each(function()
+			{
+				width += $(this).outerWidth(true);
+			});
+
+			menu.width(width);
 		}
 	}
 	
