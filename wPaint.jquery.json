@@ -1,0 +1,36 @@
+{
+  "name": "wPaint",
+  "title": "wPaint jQuery Plugin",
+  "description": "A jQuery canvas painting plugin",
+  "keywords": [
+    "websanova",
+    "wPaint",
+    "paint",
+    "canvas",
+    "html5"
+  ],
+  "version": "v1.12.1",
+  "author": {
+    "name": "Websanova"
+  },
+  "maintainers": [
+    {
+      "name": "Websanova",
+      "email": "rob@websanova.com",
+      "url": "http://websanova.com"
+    }
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/websanova/wPaint#license"
+    }
+  ],
+  "bugs": "https://github.com/websanova/wPaint/issues",
+  "homepage": "http://websanova.com/plugins/paint",
+  "docs": "https://github.com/websanova/wPaint#wpaintjs",
+  "download": "https://github.com/websanova/wPaint/tags",
+  "dependencies": {
+    "jquery": ">=1.5"
+  }
+}
