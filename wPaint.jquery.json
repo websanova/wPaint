@@ -1,7 +1,7 @@
 {
   "name": "wPaint",
   "title": "wPaint jQuery Plugin",
-  "description": "A jQuery canvas painting plugin",
+  "description": "A jQuery canvas painting plugin by Websanova",
   "keywords": [
     "websanova",
     "wPaint",
@@ -9,9 +9,11 @@
     "canvas",
     "html5"
   ],
-  "version": "v1.12.2",
+  "version": "1.12.3",
   "author": {
-    "name": "Websanova"
+    "name": "Websanova",
+    "email": "rob@websanova.com",
+    "url": "http://websanova.com"
   },
   "maintainers": [
     {
