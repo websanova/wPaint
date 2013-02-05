@@ -1,6 +1,9 @@
 # wPaint.js
 
-A jQuery paint plugin. [Check out the live demo](http://www.websanova.com/plugins/paint/html5).
+A jQuery paint plugin.
+
+ - [Feature App](http://pixanova.com)
+ - [Live Demo](http://www.websanova.com/plugins/paint/html5)
 
 
 ## Settings
