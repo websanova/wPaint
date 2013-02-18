@@ -32,6 +32,7 @@ $('#elem').wPaint({
     drawMove             : null,             // function to call during a draw
     drawUp               : null,             // function to call at end of draw
     menu                 : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+    menuOrientation      : 'horizontal'      // orinetation of menu (horizontal, vertical)
     menuOffsetX          : 5,                // offset for menu (left)
     menuOffsetY          : 5                 // offset for menu (top)
     disableMobileDefaults: false             // disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)

@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.12.3
+ * @version         Version 1.13.0
  *
  ******************************************/
 (function($)
@@ -71,8 +71,8 @@
 			if($elem.data('_wPaint')) return false;
 
 			var canvas = new Canvas(_settings, $elem);
-			canvas.mainMenu = new MainMenu();
-			canvas.textMenu = new TextMenu();
+			canvas.mainMenu = new MainMenu(canvas);
+			canvas.textMenu = new TextMenu(canvas);
 			
 			if(_settings.imageBg) $elem.append(canvas.generateBg($elem.width(), $elem.height(), _settings.imageBg));
 			$elem.append(canvas.generate($elem.width(), $elem.height()));
@@ -116,8 +116,8 @@
 			});
 			
 			//must set width after append to get proper dimensions
-			canvas.mainMenu.setWidth(canvas.mainMenu.menu);
-			canvas.mainMenu.setWidth(canvas.textMenu.menu);
+			canvas.mainMenu.setWidth(canvas, canvas.mainMenu.menu);
+			canvas.mainMenu.setWidth(canvas, canvas.textMenu.menu);
 
 			if(_settings.image)
 			{
@@ -155,6 +155,7 @@
 		drawMove			 : null,				// function to call during a draw
 		drawUp				 : null,				// function to call at end of draw
 		menu 				 : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+		menuOrientation		 : 'horizontal',		// orinetation of menu (horizontal, vertical)
 		menuOffsetX			 : 5,					// offset for menu (left)
 		menuOffsetY			 : 5,					// offset for menu (top)
 		disableMobileDefaults: false            	// disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
@@ -732,7 +733,7 @@
 	/**
 	 * Main Menu
 	 */
-	function MainMenu()
+	function MainMenu(canvas)
 	{
 		this.menu = null;
 		
@@ -785,7 +786,7 @@
 			
 			//menu
 			return this.menu = 
-			$('<div class="_wPaint_menu"></div>')
+			$('<div class="_wPaint_menu _wPaint_menu_' + $canvas.settings.menuOrientation + '"></div>')
 			.css({position: 'absolute', left: $canvas.settings.menuOffsetX, top: $canvas.settings.menuOffsetY})
 			.draggable({
 				handle: menuHandle, 
@@ -811,7 +812,7 @@
 			if(mode == 'Text')
 			{
 				_self.textMenu.menu.show();
-				_self.setWidth(_self.textMenu.menu);
+				_self.setWidth($canvas, _self.textMenu.menu);
 			}
 			else
 			{
@@ -824,15 +825,29 @@
 			_self.menu.find("._wPaint_" + mode.toLowerCase()).addClass('active');
 		},
 
-		setWidth: function(menu)
+		setWidth: function(canvas, menu)
 		{
-			var width = menu.find('._wPaint_handle').outerWidth(true);
-			width += menu.outerWidth(true) - menu.width();
-			
-			menu.find('._wPaint_options').children().each(function()
+			var options = menu.find('._wPaint_options');
+
+			if(canvas.settings.menuOrientation === 'vertical')
 			{
-				width += $(this).outerWidth(true);
-			});
+				// set proper width
+				var width = menu.find('._wPaint_options > div:first').outerWidth(true);
+				width += (options.outerWidth(true) - options.width());
+
+				//set proper height
+			}
+			else
+			{
+				var width = menu.find('._wPaint_handle').outerWidth(true);
+				width += menu.outerWidth(true) - menu.width();
+				
+				menu.find('._wPaint_options').children().each(function()
+				{
+					width += $(this).outerWidth(true);
+				});
+			}
+
 
 			menu.width(width);
 		}
@@ -841,14 +856,14 @@
 	/**
 	 * Text Helper
 	 */
-	function TextMenu()
+	function TextMenu(canvas)
 	{
 		this.menu = null;
 		
 		this.docked = true;
 		
-		this.dockOffsetLeft = 0;
-		this.dockOffsetTop = 36;
+		this.dockOffsetLeft = canvas.settings.menuOrientation === 'vertical' ? 36 : 0;
+		this.dockOffsetTop = canvas.settings.menuOrientation === 'vertical' ? 0 : 36;
 		
 		return this;
 	}
@@ -905,7 +920,7 @@
 			
 			//menu
 			return this.menu = 
-			$('<div class="_wPaint_menu"></div>')
+			$('<div class="_wPaint_menu _wPaint_menu_' + $canvas.settings.menuOrientation + '""></div>')
 			.css({display: 'none', position: 'absolute'})
 			.draggable({
 				snap: '._wPaint_menu', 
