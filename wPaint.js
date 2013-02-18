@@ -139,25 +139,25 @@
 		lineWidthMin		 : '0', 				// line width min for select drop down
 		lineWidthMax		 : '10',				// line widh max for select drop down
 		lineWidth			 : '2', 				// starting line width
-		fillStyle			 : '#FFFFFF',		// starting fill style
-		strokeStyle			 : '#FFFF00',		// start stroke style
-		fontSizeMin			 : '8',				// min font size in px
+		fillStyle			 : '#FFFFFF',			// starting fill style
+		strokeStyle			 : '#FFFF00',			// start stroke style
+		fontSizeMin			 : '8',					// min font size in px
 		fontSizeMax			 : '20',				// max font size in px
 		fontSize			 : '12',				// current font size for text input
 		fontFamilyOptions	 : ['Arial', 'Courier', 'Times', 'Trebuchet', 'Verdana'], // available font families
-		fontFamily			 : 'Arial',			// active font family for text input
-		fontTypeBold		 : false,			// text input bold enable/disable
-		fontTypeItalic		 : false,			// text input italic enable/disable
-		fontTypeUnderline	 : false,			// text input italic enable/disable
+		fontFamily			 : 'Arial',				// active font family for text input
+		fontTypeBold		 : false,				// text input bold enable/disable
+		fontTypeItalic		 : false,				// text input italic enable/disable
+		fontTypeUnderline	 : false,				// text input italic enable/disable
 		image				 : null,				// preload image - base64 encoded data
 		imageBg				 : null,				// preload image bg, cannot be altered but saved with image
 		drawDown			 : null,				// function to call when start a draw
 		drawMove			 : null,				// function to call during a draw
 		drawUp				 : null,				// function to call at end of draw
 		menu 				 : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
-		menuOffsetX			 : 5,				// offset for menu (left)
-		menuOffsetY			 : 5,				// offset for menu (top)
-		disableMobileDefaults: false            // disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
+		menuOffsetX			 : 5,					// offset for menu (left)
+		menuOffsetY			 : 5,					// offset for menu (top)
+		disableMobileDefaults: false            	// disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
 	};
 
 	/**
@@ -878,7 +878,7 @@
 			var options = '';
 			for(var i=0, ii=$canvas.settings.fontFamilyOptions.length; i<ii; i++) options += '<option value="' + $canvas.settings.fontFamilyOptions[i] + '" ' + ($canvas.settings.fontFamily == $canvas.settings.fontFamilyOptions[i] ? 'selected="selected"' : '') + '>' + $canvas.settings.fontFamilyOptions[i] + '</option>';
 			
-			var fontFamily = $('<div class="_wPaint_fontFamily _wPaint_dropDown" title="font family"></div>').append(
+			var fontFamily = $('<div class="_wPaint_fontFamily _wPaint_dropDown" title="font family"><div class="_wPaint_dropDown_cover"></div></div>').append(
 				$('<select>' + options + '</select>')
 				.change(function(e){ 
 					var fontFamily = $(this).val();

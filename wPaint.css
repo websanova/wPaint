@@ -4,12 +4,19 @@
 ._wPaint_icon,
 ._wPaint_dropDown,
 ._wPaint_color{
-	float:left; height:18px; margin:0 2px; line-height:16px;
+	position:relative; float:left; height:18px; width:18px; margin:0 2px; line-height:16px; overflow:hidden;
 	background-position:center center; background-repeat:no-repeat; cursor:pointer;
 	border-style:solid; border-width:1px; padding:3px; border-radius:5px;
 }
 
-._wPaint_icon,._wPaint_color{width:18px;}
+._wPaint_lineWidth, ._wPaint_fontSize{padding:3px 0; width:24px;}
+
+._wPaint_dropDown select{
+	background-color:#EFEFEF; border:none; cursor:pointer;
+	text-align:center; width:44px; margin-left:-3px;
+}
+
+._wPaint_dropDown_cover{position:absolute; right:0px; top:0px; height:18px; width:4px; background-color:#EFEFEF;}
 
 ._wPaint_icon,
 ._wPaint_dropDown,
@@ -17,8 +24,6 @@
 
 ._wPaint_icon:hover,
 ._wPaint_icon.active{border-color:#F88017; background-color:#E5E5E5;}
-
-._wPaint_dropDown select{margin-top:-2px; background-color:#EFEFEF; border:none; cursor:pointer;}
 
 ._wPaint_handle{float:left; width:10px; height:30px; background: #AFAFAF; border-radius:3px 0 0 3px; cursor:pointer;}
 ._wPaint_colorPicker{float:left; height:24px;}
