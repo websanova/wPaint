@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.13.0
+ * @version         Version 1.13.1
  *
  ******************************************/
 (function($)
@@ -154,10 +154,29 @@
 		drawDown			 : null,				// function to call when start a draw
 		drawMove			 : null,				// function to call during a draw
 		drawUp				 : null,				// function to call at end of draw
-		menu 				 : ['undo','clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+		menu 				 : ['undo', 'redo', 'clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
 		menuOrientation		 : 'horizontal',		// orinetation of menu (horizontal, vertical)
 		menuOffsetX			 : 5,					// offset for menu (left)
 		menuOffsetY			 : 5,					// offset for menu (top)
+        menuTitles           : {                    // icon titles, replace any of the values to customize
+                                    'undo': 'undo',
+                                    'redo': 'redo',
+                                    'clear': 'clear',
+                                    'rectangle': 'rectangle',
+                                    'ellipse': 'ellipse',
+                                    'line': 'line',
+                                    'pencil': 'pencil',
+                                    'text': 'text',
+                                    'eraser': 'eraser',
+                                    'fillColor': 'fill color',
+                                    'lineWidth': 'line width',
+                                    'strokeColor': 'stroke color',
+                                    'bold': 'bold',
+                                    'italic': 'italic',
+                                    'underline': 'underline',
+                                    'fontSize': 'font size',
+                                    'fontFamily': 'font family'
+                                },
 		disableMobileDefaults: false            	// disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
 	};
 
@@ -752,7 +771,7 @@
 			var options = '';
 			for(var i=$canvas.settings.lineWidthMin; i<=$canvas.settings.lineWidthMax; i++) options += '<option value="' + i + '" ' + ($canvas.settings.lineWidth == i ? 'selected="selected"' : '') + '>' + i + '</option>';
 			
-			var lineWidth = $('<div class="_wPaint_lineWidth _wPaint_dropDown" title="line width"></div>').append(
+			var lineWidth = $('<div class="_wPaint_lineWidth _wPaint_dropDown" title="' + $canvas.settings.menuTitles.lineWidth + '"></div>').append(
 				$('<select>' + options + '</select>')
 				.change(function(e){ $canvas.settings.lineWidth = parseInt($(this).val()); })
 			)
@@ -764,17 +783,18 @@
 			{
 				switch(item)
 				{
-					case 'undo': menuContent.append($('<div class="_wPaint_icon _wPaint_undo" title="undo"></div>').click(function(){ $canvas.undoPrev(); })).append($('<div class="_wPaint_icon _wPaint_redo" title="redo"></div>').click(function(){ $canvas.undoNext(); })); break;
-					case 'clear': menuContent.append($('<div class="_wPaint_icon _wPaint_clear" title="clear"></div>').click(function(){ $canvas.clearAll(); })); break;
-					case 'rectangle': menuContent.append($('<div class="_wPaint_icon _wPaint_rectangle" title="rectangle"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Rectangle'); })); break;
-					case 'ellipse': menuContent.append($('<div class="_wPaint_icon _wPaint_ellipse" title="ellipse"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Ellipse'); })); break;
-					case 'line': menuContent.append($('<div class="_wPaint_icon _wPaint_line" title="line"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Line'); })); break;
-					case 'pencil': menuContent.append($('<div class="_wPaint_icon _wPaint_pencil" title="pencil"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Pencil'); })); break;
-					case 'text': menuContent.append($('<div class="_wPaint_icon _wPaint_text" title="text"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Text'); })); break;
-					case 'eraser': menuContent.append($('<div class="_wPaint_icon _wPaint_eraser" title="eraser"></div>').click(function(e){ _self.set_mode(_self, $canvas, 'Eraser'); })); break;
-					case 'fillColor': menuContent.append($('<div class="_wPaint_fillColorPicker _wPaint_colorPicker" title="fill color"></div>')); break;
+					case 'undo': menuContent.append($('<div class="_wPaint_icon _wPaint_undo" title="' + $canvas.settings.menuTitles.undo + '"></div>').click(function(){ $canvas.undoPrev(); })); break;
+                    case 'redo': menuContent.append($('<div class="_wPaint_icon _wPaint_redo" title="' + $canvas.settings.menuTitles.redo + '"></div>').click(function(){ $canvas.undoNext(); })); break;
+					case 'clear': menuContent.append($('<div class="_wPaint_icon _wPaint_clear" title="' + $canvas.settings.menuTitles.clear + '"></div>').click(function(){ $canvas.clearAll(); })); break;
+					case 'rectangle': menuContent.append($('<div class="_wPaint_icon _wPaint_rectangle" title="' + $canvas.settings.menuTitles.rectangle + '"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Rectangle'); })); break;
+					case 'ellipse': menuContent.append($('<div class="_wPaint_icon _wPaint_ellipse" title="' + $canvas.settings.menuTitles.ellipse + '"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Ellipse'); })); break;
+					case 'line': menuContent.append($('<div class="_wPaint_icon _wPaint_line" title="' + $canvas.settings.menuTitles.line + '"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Line'); })); break;
+					case 'pencil': menuContent.append($('<div class="_wPaint_icon _wPaint_pencil" title="' + $canvas.settings.menuTitles.pencil + '"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Pencil'); })); break;
+					case 'text': menuContent.append($('<div class="_wPaint_icon _wPaint_text" title="' + $canvas.settings.menuTitles.text + '"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Text'); })); break;
+					case 'eraser': menuContent.append($('<div class="_wPaint_icon _wPaint_eraser" title="' + $canvas.settings.menuTitles.eraser + '"></div>').click(function(e){ _self.set_mode(_self, $canvas, 'Eraser'); })); break;
+					case 'fillColor': menuContent.append($('<div class="_wPaint_fillColorPicker _wPaint_colorPicker" title="' + $canvas.settings.menuTitles.fillColor + '"></div>')); break;
 					case 'lineWidth': menuContent.append(lineWidth); break;
-					case 'strokeColor': menuContent.append($('<div class="_wPaint_strokeColorPicker _wPaint_colorPicker" title="stroke color"></div>')); break;
+					case 'strokeColor': menuContent.append($('<div class="_wPaint_strokeColorPicker _wPaint_colorPicker" title="' + $canvas.settings.menuTitles.strokeColor + 'r"></div>')); break;
 				}
 			});
 
@@ -879,7 +899,7 @@
 			var options = '';
 			for(var i=$canvas.settings.fontSizeMin; i<=$canvas.settings.fontSizeMax; i++) options += '<option value="' + i + '" ' + ($canvas.settings.fontSize == i ? 'selected="selected"' : '') + '>' + i + '</option>';
 			
-			var fontSize = $('<div class="_wPaint_fontSize _wPaint_dropDown" title="font size"></div>').append(
+			var fontSize = $('<div class="_wPaint_fontSize _wPaint_dropDown" title="' + $canvas.settings.menuTitles.fontSize + '"></div>').append(
 				$('<select>' + options + '</select>')
 				.change(function(e){ 
 					var fontSize = parseInt($(this).val());
@@ -893,7 +913,7 @@
 			var options = '';
 			for(var i=0, ii=$canvas.settings.fontFamilyOptions.length; i<ii; i++) options += '<option value="' + $canvas.settings.fontFamilyOptions[i] + '" ' + ($canvas.settings.fontFamily == $canvas.settings.fontFamilyOptions[i] ? 'selected="selected"' : '') + '>' + $canvas.settings.fontFamilyOptions[i] + '</option>';
 			
-			var fontFamily = $('<div class="_wPaint_fontFamily _wPaint_dropDown" title="font family"><div class="_wPaint_dropDown_cover"></div></div>').append(
+			var fontFamily = $('<div class="_wPaint_fontFamily _wPaint_dropDown" title="' + $canvas.settings.menuTitles.fontFamily + '"><div class="_wPaint_dropDown_cover"></div></div>').append(
 				$('<select>' + options + '</select>')
 				.change(function(e){ 
 					var fontFamily = $(this).val();
@@ -906,11 +926,11 @@
 			//content
 			var menuContent = 
 			$('<div class="_wPaint_options"></div>')
-			.append($('<div class="_wPaint_icon _wPaint_bold ' + ($canvas.settings.fontTypeBold ? 'active' : '') + '" title="bold"></div>').click(function(){ _self.setType(_self, $canvas, 'Bold'); }))
-			.append($('<div class="_wPaint_icon _wPaint_italic ' + ($canvas.settings.fontTypeItalic ? 'active' : '') + '" title="italic"></div>').click(function(){ _self.setType(_self, $canvas, 'Italic'); }))
-			.append($('<div class="_wPaint_icon _wPaint_underline ' + ($canvas.settings.fontTypeUnderline ? 'active' : '') + '" title="underline"></div>').click(function(){ _self.setType(_self, $canvas, 'Underline'); }))
+			.append($('<div class="_wPaint_icon _wPaint_bold ' + ($canvas.settings.fontTypeBold ? 'active' : '') + '" title="' + $canvas.settings.menuTitles.bold + '"></div>').click(function(){ _self.setType(_self, $canvas, 'Bold'); }))
+			.append($('<div class="_wPaint_icon _wPaint_italic ' + ($canvas.settings.fontTypeItalic ? 'active' : '') + '" title="' + $canvas.settings.menuTitles.italic + '"></div>').click(function(){ _self.setType(_self, $canvas, 'Italic'); }))
+			.append($('<div class="_wPaint_icon _wPaint_underline ' + ($canvas.settings.fontTypeUnderline ? 'active' : '') + '" title="' + $canvas.settings.menuTitles.underline + '"></div>').click(function(){ _self.setType(_self, $canvas, 'Underline'); }))
 			.append(fontSize)
-			.append(fontFamily)
+			.append(fontFamily);
 			
 			//handle
 			var menuHandle = $('<div class="_wPaint_handle"></div>')

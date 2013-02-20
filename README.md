@@ -35,6 +35,25 @@ $('#elem').wPaint({
     menuOrientation      : 'horizontal'      // orinetation of menu (horizontal, vertical)
     menuOffsetX          : 5,                // offset for menu (left)
     menuOffsetY          : 5                 // offset for menu (top)
+    menuTitles           : {                 // icon titles, replace any of the values to customize
+                                'undo': 'undo',
+                                'redo': 'redo',
+                                'clear': 'clear',
+                                'rectangle': 'rectangle',
+                                'ellipse': 'ellipse',
+                                'line': 'line',
+                                'pencil': 'pencil',
+                                'text': 'text',
+                                'eraser': 'eraser',
+                                'fillColor': 'fill color',
+                                'lineWidth': 'line width',
+                                'strokeColor': 'stroke color',
+                                'bold': 'bold',
+                                'italic': 'italic',
+                                'underline': 'underline',
+                                'fontSize': 'font size',
+                                'fontFamily': 'font family'
+                            },
     disableMobileDefaults: false             // disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
 });
 ```
