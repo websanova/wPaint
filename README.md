@@ -1,16 +1,22 @@
 # wPaint.js
 
-A jQuery paint plugin.
+A jQuery paint plugin for a simple drawing surface that you can easily pop into your pages, similar to the basic windows paint program.
 
- - [Feature App](http://pixanova.com)
- - [Live Demo](http://www.websanova.com/plugins/paint/html5)
+* [View the wHumanMsg demo](http://whumanmsg.websanova.com)
+* [Download the lastest version of wHumanMsg](https://github.com/websanova/wHumanMsg/tags)
+
+
+## Related Plugins
+
+* [wScratchPad](http://wscratchpad.websanova.com) - Plugin simulating scratch card.
+* [wColorPicker](http://wcolorpicker.websanova.com) - Color pallette seleciton plugin.
 
 
 ## Settings
 
 Available options with notes, the values here are the defaults.
 
-```javascript
+```js
 $('#elem').wPaint({
     mode                 : 'Pencil',         // drawing mode - Rectangle, Ellipse, Line, Pencil, Eraser
     lineWidthMin         : '0',              // line width min for select drop down
@@ -58,96 +64,66 @@ $('#elem').wPaint({
 });
 ```
 
-Update settings on the fly:
 
-```javascript
-$('#elem').wPaint('image', '<image_data>');
-$('#elem').wPaint('image', '/path/to/file.jpg');
+## Examples
+
+Include the followin files:
+
+```js
+<script type="text/javascript" src="./wPaint.js"></script>
+<link rel="Stylesheet" type="text/css" href="./wPaint.css" />
 ```
 
-Retrieve settings, if more than one it will return an array otherwise just the value.
+### callbacks
 
-```javascript
-console.log($('#elem').wPaint('strokeStyle'));            // #FFFF00
-console.log($('.elem').wPaint('strokeStyle'));            // ['#FFFF00', '#FFFF00']
+```js
+$("#elem").wPaint({
+    image: <image_data>,
+    drawDown: function(e, mode){ console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
+    drawMove: function(e, mode){ console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
+    drawUp: function(e, mode){ console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY); }
+});
 ```
 
-Retrieve paint object.
+### background
 
-```javascript
-var wp = $('#wPaint').wPaint().data('_wPaint');
-console.log(wp);                                          // {wPaint object}
+Init with background (bg is saved with image but cannot be altered):
+
+```js
+$("#wPaint").wPaint({
+    image: './some/path/imagepreload.png',
+    imageBg: './some/path/imagebg.png'
+});
 ```
 
+### image data
 
-## Methods
+Set image on the fly.  Thsi can be a base64 encoded an image or simply a path to any image on the same domain.
+
+```js
+$('#wPaint').wPaint('image', '<image_data>')
+```
+
+Get the image data:
+
+```js
+var imageData = $("#wPaint").wPaint("image");
+            
+$("#canvasImage").attr('src', imageData);
+```
+
+### clear
+
+Clear the canvas manually.
 
 ```javascript
 $('#elem').wPaint('clear');
 ```
 
 
-## Examples
-
-Init with image and some callbacks:
-
-```html
-<div id="wPaint"></div>
-down: <input id="canvasDown" type="text" />
-move: <input id="canvasMove" type="text" />
-up:   <input id="canvasUp" type="text" />
-
-<script type="text/javascript">
-    $("#wPaint").wPaint({
-        image: <image_data>,
-        drawDown: function(e, mode){ $("#canvasDown").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
-        drawMove: function(e, mode){ $("#canvasMove").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); },
-        drawUp: function(e, mode){ $("#canvasUp").val(this.settings.mode + ": " + e.pageX + ',' + e.pageY); }
-    });
-</script>
-```
-
-Init with background (bg is saved with image but cannot be altered):
-
-```html
-<div id="wPaint"></div>
-
-<script type="text/javascript">
-    $("#wPaint").wPaint({
-        image: './some/path/imagepreload.png',
-        imageBg: './some/path/imagebg.png'
-    });
-</script>
-```
-
-Set image on the fly:
-
-```html
-<div id="wPaint"></div>
-    
-<script type="text/javascript">
-    $("#wPaint").wPaint();
-
-    $('#wPaint').wPaint('image', '<image_data>')
-</script>
-```
-
-Get image data:
-
-```html
-<div id="wPaint"></div>
-<img id="canvasImage" src=""/>
-
-<script type="text/javascript">
-    var imageData = $("#wPaint").wPaint("image");
-            
-    $("#canvasImage").attr('src', imageData);
-</script>
-```
-
-
 ## Resources
 
+* [More jQuery plugins by Websanova](http://websanova.com/plugins)
 * [jQuery Plugin Development Boilerplate](http://www.websanova.com/tutorials/jquery/jquery-plugin-development-boilerplate)
 * [The Ultimate Guide to Writing jQuery Plugins](http://www.websanova.com/tutorials/jquery/the-ultimate-guide-to-writing-jquery-plugins)
 

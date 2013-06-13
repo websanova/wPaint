@@ -1,7 +1,5 @@
 <?php
 
-echo $_POST['image'];
-
 $image = imagecreatefrompng($_POST['image']);
 
 imagealphablending($image, false);
