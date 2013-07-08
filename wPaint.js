@@ -30,6 +30,8 @@
 				if(data)
 				{
 					if(option == 'clear') { data.clearAll(); }
+					else if(option == 'undo') { data.undoPrev(); }
+					else if(option == 'redo') { data.undoNext(); }
 					else if(option == 'image' && settings === undefined) { values.push(data.getImage()); }
 					else if(option == 'image' && settings !== undefined) { data.setImage(settings, true); }
 					else if(option == 'imageBg' && settings !== undefined) { data.setBgImage(settings); }
