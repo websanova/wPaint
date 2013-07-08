@@ -56,6 +56,7 @@
 		settings.fontSizeMin = parseInt(settings.fontSizeMin);
 		settings.fontSizeMax = parseInt(settings.fontSizeMax);
 		settings.fontSize = parseInt(settings.fontSize);
+		settings.undoMax = parseInt(settings.undoMax);
 		
 		return this.each(function()
 		{			
@@ -179,6 +180,7 @@
                                     'fontSize': 'font size',
                                     'fontFamily': 'font family'
                                 },
+		undoMax				 : 10,
 		disableMobileDefaults: false            	// disable default touchmove events for mobile (will prevent flipping between tabs and scrolling)
 	};
 
@@ -194,7 +196,7 @@
 		
 		this.undoArray = [];
 		this.undoCurrent = -1;
-		this.undoMax = 10;
+		this.undoMax = settings.undoMax;
 
 		this.draw = false;
 
