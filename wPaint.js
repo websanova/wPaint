@@ -338,8 +338,10 @@
 			
 			var canvas_offset = $(_self.canvas).offset();
 			
-			$e.pageX = Math.floor($e.pageX - canvas_offset.left);
-			$e.pageY = Math.floor($e.pageY - canvas_offset.top);
+			$e.origPageX = Math.floor($e.pageX - canvas_offset.left);
+			$e.origPageY = Math.floor($e.pageY - canvas_offset.top);
+			$e.pageX = $e.origPageX * _self.xRatio();
+			$e.pageY = $e.origPageY * _self.yRatio();
 			
 			var mode = $.inArray(_self.settings.mode, shapes) > -1 ? 'Shape' : _self.settings.mode;
 			var func = _self['draw' + mode + '' + event];	
@@ -365,7 +367,7 @@
 			}
 
 			$(_self.canvasTemp)
-			.css({left: e.pageX, top: e.pageY})
+			.css({left: e.origPageX, top: e.origPageY})
 			.attr('width', 0)
 			.attr('height', 0)
 			.show();
@@ -385,15 +387,20 @@
 			
 			var half_line_width = _self.settings.lineWidth / 2;
 			
+			// Calculations done respective to the "image" (i.e. "larger") values
 			var left = (e.pageX < xo ? e.pageX : xo) - (_self.settings.mode == 'Line' ? Math.floor(half_line_width) : 0);
 			var top = (e.pageY < yo ? e.pageY : yo) - (_self.settings.mode == 'Line' ? Math.floor(half_line_width) : 0);
 			var width = Math.abs(e.pageX - xo) + (_self.settings.mode == 'Line' ? _self.settings.lineWidth : 0);
 			var height = Math.abs(e.pageY - yo) + (_self.settings.mode == 'Line' ? _self.settings.lineWidth : 0);
 
 			$(_self.canvasTemp)
-			.css({left: left, top: top})
+			.css({
+					left:      left   / _self.xRatio(),
+					top:       top    / _self.yRatio(),
+					maxWidth:  width  / _self.xRatio(),
+					maxHeight: height / _self.yRatio()})
 			.attr('width', width)
-			.attr('height', height)
+			.attr('height', height);
 			
 			if(_self.settings.mode == 'Text') _self.textInput.css({left: left-1, top: top-1, width:width, height:height});
 			
@@ -746,7 +753,15 @@
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 			this.addUndo();
-		}
+		},
+
+		/**
+		 * Ration between the actual width, and the image width
+		 * - image width can be larger when the canvas is constraint with a `max-width`
+		 * - returned ration is >= 1
+		 */
+		xRatio: function () { return this.canvas.width  / this.canvas.clientWidth ;  },
+		yRatio: function () { return this.canvas.height / this.canvas.clientHeight; }
 	}
 	
 	/**
