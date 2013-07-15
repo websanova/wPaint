@@ -8,7 +8,7 @@
  * @license         This wPaint jQuery plug-in is dual licensed under the MIT and GPL licenses.
  * @link            http://www.websanova.com
  * @github			http://github.com/websanova/wPaint
- * @version         Version 1.13.2
+ * @version         Version 1.14.0
  *
  ******************************************/
 (function($)
