@@ -157,7 +157,7 @@
 		drawDown			 : null,				// function to call when start a draw
 		drawMove			 : null,				// function to call during a draw
 		drawUp				 : null,				// function to call at end of draw
-		menu 				 : ['undo', 'redo', 'clear','rectangle','ellipse','line','pencil','text','eraser','dropper','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
+		menu 				 : ['undo', 'redo', 'clear','rectangle','ellipse','line','pencil','text','eraser','dropper','bucket','fillColor','lineWidth','strokeColor'], // menu items - appear in order they are set
 		menuOrientation		 : 'horizontal',		// orinetation of menu (horizontal, vertical)
 		menuOffsetX			 : 5,					// offset for menu (left)
 		menuOffsetY			 : 5,					// offset for menu (top)
@@ -172,6 +172,7 @@
                                     'text': 'text',
                                     'eraser': 'eraser',
                                     'dropper': 'dropper',
+                                    'bucket': 'bucket',
                                     'fillColor': 'fill color',
                                     'lineWidth': 'line width',
                                     'strokeColor': 'stroke color',
@@ -347,8 +348,8 @@
 			$e.pageY = Math.floor($e.pageY - canvas_offset.top);
 			
 			var mode = $.inArray(_self.settings.mode, shapes) > -1 ? 'Shape' : _self.settings.mode;
-			var func = (mode === 'Dropper' && event == 'Down')
-				? _self['pickColor']
+			var func = (mode === 'Dropper' && event == 'Down') ? _self['pickColor']
+				: (mode === 'Bucket'  && event == 'Down') ? _self['fillArea']
 				: _self['draw' + mode + '' + event];
 			
 			if(func) func($e, _self);
@@ -787,6 +788,85 @@
             } else {
                 cp.colorSelect(cp, 'rgb(' + [ pixel.r, pixel.g, pixel.b ].join(',') + ')');
             }
+        },
+
+        /*******************************************************************************
+         * fill area
+         ******************************************************************************/
+        _equalPixel: function(p1, p2) {
+            return p1.r == p2.r
+                && p1.g == p2.g
+                && p1.b == p2.b
+                && p1.a == p2.a;
+        },
+
+        _putPixel: function(imageData, pos, pixel) {
+            var pixelArray = imageData.data;
+            var base = ((pos.y * imageData.width) + pos.x) * 4;
+            pixelArray[base]     = pixel.r
+            pixelArray[base + 1] = pixel.g
+            pixelArray[base + 2] = pixel.b
+            pixelArray[base + 3] = pixel.a
+        },
+
+        _toPixel: function(color) {
+            var matched;
+            if (color.charAt(0) === '#') {
+                if (color.length === 4) {
+                    return {
+                        r: parseInt(color.charAt(1), 16),
+                        g: parseInt(color.charAt(2), 16),
+                        b: parseInt(color.charAt(3), 16),
+                        a: 255
+                    };
+                } else if (color.length === 7) {
+                    return {
+                        r: parseInt(color.substr(1, 2), 16),
+                        g: parseInt(color.substr(3, 2), 16),
+                        b: parseInt(color.substr(5, 2), 16),
+                        a: 255
+                    };
+                }
+            } else if (matched = color.replace(/\s/g, '').match(/rgba?\(([\d,]+)\)/)[1]) {
+                var rgba = matched.split(',');
+                var pixel = {};
+                pixel.r = rgba[0];
+                pixel.g = rgba[1];
+                pixel.b = rgba[2];
+                pixel.a = (rgba[3] === undefined) ? 255 : rgba[3];
+                return pixel;
+            }
+        },
+
+        fillArea: function(e, _self) {
+            var imageData = _self.ctx.getImageData(
+                0, 0, _self.canvas.width, _self.canvas.height
+            );
+            var pixelArray = imageData.data;
+
+            var pixel = _self._toPixel(_self.settings.fillStyle);
+            var startPos = { x:e.pageX, y:e.pageY };
+            var startPixel = _self._getPixel(imageData, startPos);
+            var queue = [startPos];
+            var dist = [{x:0,y:1},{x:1,y:0},{x:0,y:-1},{x:-1,y:0}];
+
+            while(!!queue.length) {
+                var pos = queue.pop();
+
+                _self._putPixel(imageData, pos, pixel);
+
+                for (var i = 0; i < dist.length; i++) {
+                    var nextPos = { x : pos.x + dist[i].x, y : pos.y + dist[i].y };
+                    if (nextPos.x < 0 || nextPos.x >= _self.canvas.width) continue;
+                    if (nextPos.y < 0 || nextPos.y >= _self.canvas.height) continue;
+                    var nextPixel = _self._getPixel(imageData, nextPos);
+                    if (!_self._equalPixel(startPixel, nextPixel)) continue;
+                    if (_self._equalPixel(pixel, nextPixel)) continue;
+
+                    queue.push(nextPos);
+                }
+            }
+            _self.ctx.putImageData(imageData, 0, 0);
         }
 	}
 	
@@ -834,6 +914,7 @@
 					case 'text': menuContent.append($('<div class="_wPaint_icon _wPaint_text" title="' + $canvas.settings.menuTitles.text + '"></div>').click(function(){ _self.set_mode(_self, $canvas, 'Text'); })); break;
 					case 'eraser': menuContent.append($('<div class="_wPaint_icon _wPaint_eraser" title="' + $canvas.settings.menuTitles.eraser + '"></div>').click(function(e){ _self.set_mode(_self, $canvas, 'Eraser'); })); break;
 					case 'dropper': menuContent.append($('<div class="_wPaint_icon _wPaint_dropper" title="' + $canvas.settings.menuTitles.dropper + '"></div>').click(function(e){ _self.set_mode(_self, $canvas, 'Dropper'); })); break;
+					case 'bucket': menuContent.append($('<div class="_wPaint_icon _wPaint_bucket" title="' + $canvas.settings.menuTitles.bucket + '"></div>').click(function(e){ _self.set_mode(_self, $canvas, 'Bucket'); })); break;
 					case 'fillColor': menuContent.append($('<div class="_wPaint_fillColorPicker _wPaint_colorPicker" title="' + $canvas.settings.menuTitles.fillColor + '"></div>')); break;
 					case 'lineWidth': menuContent.append(lineWidth); break;
 					case 'strokeColor': menuContent.append($('<div class="_wPaint_strokeColorPicker _wPaint_colorPicker" title="' + $canvas.settings.menuTitles.strokeColor + 'r"></div>')); break;
