@@ -1,0 +1,176 @@
+/***********************************
+ * Layout - probably shouldn't touch these
+ ***********************************/
+/*** menu ***/
+.wPaint-menu {
+	position: absolute;
+	line-height: 0px;
+	z-index: 99;
+}
+.wPaint-menu-behind {
+	z-index: 98;
+}
+.wPaint-menu-holder {
+	position: relative;
+	margin: 0 1px 1px 0;
+}
+.wPaint-menu-handle {
+	display: inline-block;
+}
+.wPaint-menu-icon {
+	position: relative;
+  vertical-align: top;
+	cursor: pointer;
+}
+.wPaint-menu-icon-img {
+  position: relative;
+  display: inline-block;
+	background-repeat: no-repeat;
+}
+/*** text input ***/
+._wPaint_textInput{
+	margin: 0px;
+	padding: 0px;
+	outline-width: 0;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+/*** select ***/
+.wPaint-menu-select-holder{
+  position: absolute;
+  left: 1px;
+  z-index: 10;
+  border: solid #CACACA 1px;
+  border-radius: 5px;
+  border-top-left-radius: 0px;
+  box-shadow: 1px 1px 2px #666;
+  background-color: #F0F0F0;
+  overflow: hidden;
+}
+.wPaint-menu-select {
+  position: relative;
+  line-height: 10px;
+  font-size: 10px;
+  font-family: verdana;
+  text-align: center;
+  color: #494949;
+  max-height: 80px;
+  overflow-y: scroll;
+  z-index: 100;
+}
+.wPaint-menu-select-option {
+  min-width: 20px;
+  max-width: 50px;
+  padding: 4px;
+  border-top: solid #CACACA 1px;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 3px #fff;
+}
+.wPaint-menu-select-option.first {
+  border-top: 0px;
+}
+.wPaint-menu-select-option:hover {
+  box-shadow: inset 1px 1px 1px #fff;
+  background-color: #99ccff;
+  color: #f0f0f0;
+}
+.wPaint-menu-icon-group-arrow {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  width: 5px;
+  height: 3px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAK6wAACusBgosNWgAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOC8xMS8xMyj8hykAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAKElEQVQImV3IwQ0AMAyDQKerspZ3pa9IVXmdGMB8nbbzjrYTNWoA1xeQ3RPyxUyE/gAAAABJRU5ErkJggg==');
+}
+/***********************************
+ * Appearance
+ ***********************************/
+.wPaint-menu-holder {
+	border: solid #dadada 1px;
+	border-radius: 7px;
+	background-color: #f0f0f0;
+	box-shadow:3px 3px 5px #555555;
+}
+.wPaint-menu-handle {
+	background-color: #dadada;
+	box-shadow: inset 1px 1px 3px #FFF;
+	cursor: pointer;
+}
+.wPaint-menu-icon {
+	border: solid #b9b9b9 1px;
+	border-radius: 7px;
+	background-color: #b9b9b9;
+	box-shadow: inset 2px 2px 3px #eee, 1px 1px 2px #666;
+}
+.wPaint-menu-icon-img {
+  overflow: hidden;
+	margin: 6px 5px 5px 6px;
+  width: 18px;
+	height: 18px;
+  line-height: 18px;
+  font-size:12px;
+  font-family: verdana;
+  font-weight: bold;
+  text-align: center;
+  color: #696969;
+}
+.wPaint-menu-icon-select-img {
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+}
+.wPaint-menu-colorpicker .wPaint-menu-icon-img {
+	margin: 3px 2px 2px 3px;
+	width: 24px;
+	height: 24px;
+	border-radius: 5px;
+}
+.wPaint-menu-icon.disabled {
+	cursor: default;
+}
+.wPaint-menu-icon.disabled .wPaint-menu-icon-img {
+	opacity: 0.3;
+}
+.wPaint-menu-icon.hover,
+.wPaint-menu-icon.active {
+	border-color: #99ccff;
+	background-color: #aaccff;
+}
+._wPaint_textInput{
+	border: dotted #0000FF 1px;
+	background: none;
+}
+
+/* horizontal */
+.wPaint-menu-alignment-horizontal.wPaint-menu-nohandle .wPaint-menu-holder {
+  padding-left: 4px;
+}
+.wPaint-menu-alignment-horizontal .wPaint-menu-icon {
+  display: inline-block;
+  margin: 4px 5px 4px 0;
+}
+.wPaint-menu-alignment-horizontal .wPaint-menu-handle {
+	width: 30px;
+	height: 39px;
+	margin-right: 5px;
+	border-right: solid #dadada 1px;
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+}
+
+/* vertical */
+.wPaint-menu-alignment-vertical.wPaint-menu-nohandle .wPaint-menu-holder {
+  padding-top: 4px;
+}
+.wPaint-menu-alignment-vertical .wPaint-menu-icon {
+  display: block;
+  margin: 0 4px 5px 4px;
+}
+.wPaint-menu-alignment-vertical .wPaint-menu-handle {
+  width: 39px;
+  height: 30px;
+  margin-bottom: 5px;
+  border-bottom: solid #dadada 1px;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;	
+}

@@ -1,1 +1,2 @@
-uploads/*
+node_modules/
+npm-debug.txt

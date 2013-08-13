@@ -1,6 +1,6 @@
 {
   "name": "wPaint",
-  "title": "wPaint jQuery Plugin",
+  "title": "wPaint jQuery Paint Plugin",
   "description": "A jQuery paint plugin for a simple drawing surface that you can easily pop into your pages, similar to the basic windows paint program.",
   "keywords": [
     "websanova",
@@ -9,7 +9,7 @@
     "canvas",
     "html5"
   ],
-  "version": "1.14.0",
+  "version": "2.0.0",
   "author": {
     "name": "Websanova",
     "email": "rob@websanova.com",

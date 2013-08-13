@@ -136,3 +136,28 @@ $('#elem').wPaint('clear');
 MIT licensed
 
 Copyright (C) 2011-2012 Websanova http://www.websanova.com
+
+
+2.0
+-better docs
+-full code overhaul
+-extensions
+-it takes a lot of work for me to make these plugins, please support me on gittip here.
+-drawing funcs are much more separated now, each function and drawing is it's own independant unit and should be able to be extended on it's own
+
+
+
+### menus
+-all icons in one file (get guys icons from github)
+-each menu should have separate icons file (this will allow for adding menus) - menu name must be same as file name - this is how they will sync
+-also make some new icons
+
+### bg
+-setBg func - use rgbHex func already there from ColorPicker - if color - use it, otherwise try to set image path
+
+### shapes
+-taking advantage of the exsiting shape logic - make sure you call shapeUp, shapeMove, shapeDown in your funcs, this will set things up properly so that you can make calculations to draw your shapes wihtin the temp canvas object (explain how canvasTemp works)
+
+###
+-overloading funcs - don't worry about overwrites, they will just continue to stack and duck punch
+
