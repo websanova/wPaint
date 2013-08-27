@@ -57,10 +57,6 @@ $.fn.wPaint.extend({
     // must add undo on init to set the first undo as the initial drawing (bg or blank)
     this._addUndo();
     this.menus.all.main._setIconDisabled('clear', true);
-
-    this.setStrokeStyle(this.options.strokeStyle);
-    this.setLineWidth(this.options.lineWidth);
-    this.setFillStyle(this.options.fillStyle);
   },
 
   setStrokeStyle: function(color) {

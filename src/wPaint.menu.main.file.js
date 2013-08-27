@@ -75,9 +75,9 @@ $.fn.wPaint.extend({
       this._showModal($content);
 
       function appendContent(type, image) {
-        $img.click(imgclick);
+        $img.click(imgClick);
 
-        function imgClick() {
+        function imgClick(e) {
 
           // just in case to not draw on canvas
           e.stopPropagation();

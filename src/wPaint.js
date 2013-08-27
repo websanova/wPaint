@@ -1,4 +1,5 @@
-(function($) {
+!(function($) {
+   'use strict';
 
   /************************************************************************
    * Paint class
@@ -65,13 +66,13 @@
         _this.draw = true;
         e.canvasEvent = 'down';
         _this._closeSelectBoxes();
-        _this._callFunc.apply(_this, [e]);
+        _this._callShapeFunc.apply(_this, [e]);
       }
 
       function documentMousemove(e) {
         if (_this.draw) {
           e.canvasEvent = 'move';
-          _this._callFunc.apply(_this, [e]);
+          _this._callShapeFunc.apply(_this, [e]);
         }
       }
 
@@ -81,22 +82,28 @@
         if (_this.draw) {
           _this.draw = false;
           e.canvasEvent = 'up';
-          _this._callFunc.apply(_this, [e]);
+          _this._callShapeFunc.apply(_this, [e]);
         }
       }
     },
 
     _init: function() {
+      var index = null,
+          setFuncName = null;
+
       this.init = true;
+
+      // run any set functions if they exist
+      for (index in this.options) {
+        setFuncName = 'set' + index.capitalize();
+        if (this[setFuncName]) this[setFuncName](this.options[index]);
+      }
 
       this._fixMenus();
       this._bindMobileEvents();
 
       // initialize active menu button
-      this.menus.primary._getIcon(this.options.mode).trigger('click');
-
-      this.setBg(this.options.bg);
-      this.setMode(this.options.mode); // defined in menu
+      this.menus.primary._getIcon(this.options.mode).trigger('click');      
     },
 
     /************************************
@@ -326,7 +333,7 @@
       });
     },
 
-    _callFunc: function(e) {
+    _callShapeFunc: function(e) {
 
       // TODO: this is where issues with mobile offsets are probably off
       var canvasOffset = this.$canvas.offset(),
@@ -821,7 +828,7 @@
           timer = null;
 
       $selectHolder
-      .bind('mousedown mouseup', this.wPaint.stopPropagation)
+      .bind('mousedown mouseup', this.wPaint._stopPropagation)
       .click(clickSelectHolder)
       .hide();
 
@@ -998,26 +1005,7 @@
     if (typeof options === 'string') {
       var values = [], wPaint = null, elements = null, func = null;
 
-      elements = this.each(function() {
-        wPaint = $(this).data('wPaint');
-
-        if (wPaint) {
-          func = (value ? 'set' : 'get') + options.charAt(0).toUpperCase() + options.substring(1).toLowerCase();
-
-          if (wPaint[options]) {
-            wPaint[options].apply(wPaint, [value]);
-          }
-          else if (value) {
-            if (wPaint[func]) { wPaint[func].apply(wPaint, [value]); }
-            if (wPaint.options[options]) { wPaint.options[options] = value; }
-          }
-          else {
-            if(wPaint[func]) { values.push(wPaint[func].apply(wPaint, [value])); }
-            else if (wPaint.options[options]) { values.push(wPaint.options[options]); }
-            else { values.push(null); }
-          }
-        }
-      });
+      elements = this.each(elOptionsEach);
 
       if (values.length === 1) { return values[0]; }
       else if (values.length > 0) { return values; }
@@ -1025,6 +1013,40 @@
     }
 
     options = $.extend({}, $.fn.wPaint.defaults, options);
+
+    return this.each(elCreateEach);
+
+    //-- funcs --//
+
+    function elOptionsEach() {
+      wPaint = $(this).data('wPaint');
+
+      if (wPaint) {
+        func = (value ? 'set' : 'get') + options.charAt(0).toUpperCase() + options.substring(1).toLowerCase();
+
+        if (wPaint[options]) {
+          wPaint[options].apply(wPaint, [value]);
+        }
+        else if (value) {
+          if (wPaint[func]) { wPaint[func].apply(wPaint, [value]); }
+          if (wPaint.options[options]) { wPaint.options[options] = value; }
+        }
+        else {
+          if(wPaint[func]) { values.push(wPaint[func].apply(wPaint, [value])); }
+          else if (wPaint.options[options]) { values.push(wPaint.options[options]); }
+          else { values.push(null); }
+        }
+      }
+    }
+
+    function elCreateEach() {
+      if (!$.support.canvas) {
+        $(this).html("Browser does not support HTML5 canvas, please upgrade to a more modern browser.");
+        return false;
+      }
+
+      get(this);
+    }
 
     function get(el) {
       var wPaint = $.data(el, 'wPaint');
@@ -1040,17 +1062,6 @@
 
       return wPaint;
     }
-
-    function elEach() {
-      if (!$.support.canvas) {
-        $(this).html("Browser does not support HTML5 canvas, please upgrade to a more modern browser.");
-        return false;
-      }
-
-      get(this);
-    }
-
-    return this.each(elEach);
   };
 
   /************************************************************************
