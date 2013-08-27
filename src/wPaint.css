@@ -3,7 +3,8 @@
  ***********************************/
 /*** menu ***/
 .wPaint-menu {
-	position: absolute;
+	position: absolute !important;
+  display: inline-block;
 	line-height: 0px;
 	z-index: 99;
 }
@@ -54,12 +55,11 @@
   font-family: verdana;
   text-align: center;
   color: #494949;
-  max-height: 80px;
+  max-height: 136px;
   overflow-y: scroll;
   z-index: 100;
 }
 .wPaint-menu-select-option {
-  min-width: 20px;
   max-width: 50px;
   padding: 4px;
   border-top: solid #CACACA 1px;
@@ -173,4 +173,79 @@
   border-bottom: solid #dadada 1px;
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;	
+}
+
+/***********************************
+ * file menu
+ ***********************************/
+.wPaint-status {
+  position: absolute;
+  display: none;
+  right: 0px;
+  bottom: 0px;
+  font-size: 10px;
+  font-family: verdana;
+  line-height: 10px;
+  height: 10px;
+  background-color: #3a3a3a;
+  color: #f0f0f0;
+  padding: 5px;
+  opacity: 0.5;
+}
+.wPaint-modal-bg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: #3a3a3a;
+  opacity: 0.8;
+}
+.wPaint-modal {
+  position: absolute;
+  display: inline-block;
+}
+.wPaint-modal-holder {
+  display: inline-block;
+  height: 100px;
+  box-shadow: 3px 3px 5px #555555;
+  border-radius: 5px;
+  border: solid #3a3a3a 2px;
+  background: #f0f0f0;
+  opacity: 0.75;
+  overflow: hidden;
+  cursor: default; 
+}
+.wPaint-modal-content {
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+}
+.wPaint-modal-img-holder {
+  border: solid #333 1px;
+  border-radius: 5px;
+  margin: 3px;
+  padding: 2px;
+  line-height: 0px;
+  cursor: pointer;
+}
+.wPaint-modal-img {
+  display: inline-block;
+  width: 100px;
+  border-radius: 4px;
+  margin-bottom: 0px;
+}
+.wPaint-modal-close {
+  position: absolute;
+  right: -7px;
+  top: -7px;
+  border-radius: 10px;
+  font-size: 8px;
+  line-height: 14px;
+  padding: 0 4px;
+  font-weight:bold;
+  background-color: #f0f0f0;
+  border: solid #000 2px;
+  cursor: pointer;
 }

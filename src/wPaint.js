@@ -1,87 +1,99 @@
 (function($) {
+
   /************************************************************************
    * Paint class
    ************************************************************************/
   function Paint(el, options) {
       this.$el = $(el);
       this.options = options;
-      this.menu = {primary:null, visible:null, all:{}};
-      this.icons = {}, // keep track of icons (maybe create icon object for menu here if necessary later on)
       this.init = false;
+
+      this.menus = {primary:null, active:null, all:{}};
       this.previousMode = null;
       this.width = this.$el.width();
       this.height = this.$el.height();
 
       this.generate();
       this._init();
-  };
+  }
   
   Paint.prototype = {
     generate: function() {
-      if(this.init) return this;
+      if(this.init) { return this; }
 
       var _this = this;
 
-      // bg canvas
-      this.canvasBg = document.createElement('canvas');
-      this.ctxBg = this.canvasBg.getContext('2d');
-      this.$canvasBg = $(this.canvasBg);
+      // create canvases
+      createCanvas('bg');
+      createCanvas('').mousedown(canvasMousedown);
+      createCanvas('temp').hide();
       
-      this.$canvasBg
-      .attr('class', 'wPaint-canvas-bg')
-      .attr('width', this.width + 'px')
-      .attr('height', this.height + 'px')
-      .css({position: 'absolute', left: 0, top: 0});
+      // event handlers for drawing
+      $(document)
+      .mousemove(documentMousemove)
+      .mousedown($.proxy(this._closeSelectBoxes, this))
+      .mouseup(documentMouseup);
 
-      // main canvas and draw handlers
-      this.canvas = document.createElement('canvas');
-      this.ctx = this.canvas.getContext('2d');
-      this.$canvas = $(this.canvas);
+      // automatically appends each canvas
+      // also returns the jQuery object so we can chain events right off the function call.
+      // for the tempCanvas we will be setting some extra attributes but don't won't matter
+      // as they will be reset on mousedown anyway.
+      function createCanvas(name) {
+        var newName = (name ? name.capitalize() : ''),
+            canvasName = 'canvas' + newName,
+            ctxName = 'ctx' + newName;
 
-      this.$canvas
-      .attr('class', 'wPaint-canvas')
-      .attr('width', this.width + 'px')
-      .attr('height', this.height + 'px')
-      .css({position: 'absolute', left: 0, top: 0})
-      .mousedown(function(e) {
+        _this[canvasName] = document.createElement('canvas');
+        _this[ctxName] = _this[canvasName].getContext('2d');
+        _this['$' + canvasName] = $(_this[canvasName]);
+        
+        _this['$' + canvasName]
+        .attr('class', 'wPaint-canvas' + (name ? '-' + name : ''))
+        .attr('width', _this.width + 'px')
+        .attr('height', _this.height + 'px')
+        .css({position: 'absolute', left: 0, top: 0});
+
+        _this.$el.append(_this['$' + canvasName]);
+
+        return _this['$' + canvasName];
+      }
+
+      // event functions
+      function canvasMousedown(e) {
         e.preventDefault();
         e.stopPropagation();
         _this.draw = true;
         e.canvasEvent = 'down';
+        _this._closeSelectBoxes();
         _this._callFunc.apply(_this, [e]);
-      });
-      
-      // event handlers for drawing
-      $(document)
-      .mousemove(function(e) {
-        if(_this.draw) {
+      }
+
+      function documentMousemove(e) {
+        if (_this.draw) {
           e.canvasEvent = 'move';
           _this._callFunc.apply(_this, [e]);
         }
-      })
-      .mouseup(function(e) {
+      }
+
+      function documentMouseup(e) {
+
         //make sure we are in draw mode otherwise this will fire on any mouse up.
-        if(_this.draw) {
+        if (_this.draw) {
           _this.draw = false;
           e.canvasEvent = 'up';
           _this._callFunc.apply(_this, [e]);
         }
-      });
-
-      // temp canvas for drawing
-      this.canvasTemp = document.createElement('canvas');
-      this.ctxTemp = this.canvasTemp.getContext('2d');
-      this.$canvasTemp = $(this.canvasTemp);
-      this.$canvasTemp.css({position: 'absolute'}).hide();
- 
-      this.$el.append(this.$canvasBg).append(this.$canvas).append(this.$canvasTemp);
+      }
     },
 
     _init: function() {
       this.init = true;
 
+      this._fixMenus();
+      this._bindMobileEvents();
+
       // initialize active menu button
-      this.menu.primary._getIcon(this.options.mode).trigger('click');
+      this.menus.primary._getIcon(this.options.mode).trigger('click');
 
       this.setBg(this.options.bg);
       this.setMode(this.options.mode); // defined in menu
@@ -103,32 +115,52 @@
       this.options.mode = mode;
     },
 
-    setImage: function(data, canvas) {
-      var _this = this,
-          myImage = new Image(),
-          ctx = canvas ? canvas : this.ctx;
+    setImage: function(img, ctx) {
+      if (!img) { return true; }
+
+      var _this = this;
       
-      myImage.src = data.toString();
+      ctx = ctx || this.ctx;
       
-      $(myImage).load(function() {
+      if (window.rgbHex(img)) {
         ctx.clearRect(0, 0, this.width, this.height);
-        ctx.drawImage(myImage, 0, 0);
-        if (!canvas) { _this._imageOnload(); }
-      });
+        ctx.fillStyle = img;
+        ctx.rect(0, 0, this.width, this.height);
+        ctx.fill();
+      }
+      else {
+        var myImage = new Image();
+        myImage.src = img.toString();
+        
+        $(myImage).load(function() {
+          var ratio=1, xR=0, yR=0, x=0, y=0, w=myImage.width, h=myImage.height;
+
+          // get width/height
+          if (myImage.width > _this.width || myImage.height > _this.height) {
+            xR = _this.width / myImage.width;
+            yR = _this.height / myImage.height;
+
+            ratio = xR < yR ? xR : yR;
+
+            w = myImage.width * ratio;
+            h = myImage.height * ratio;
+          }
+
+          // get left/top (centering)
+          x = (_this.width - w) / 2;
+          y = (_this.height - h) / 2;
+
+          ctx.clearRect(0, 0, _this.width, _this.height);
+          ctx.drawImage(myImage, x, y, w, h);
+          if (!ctx) { _this._imageOnload(); }
+        });
+      }
     },
 
     setBg: function(img) {
-      this.ctxBg.clearRect(0, 0, this.width, this.height);
-
-      // check if img is just a color
-      if (window.rgbHex(img)) {
-        this.ctxBg.fillStyle = img;
-        this.ctxBg.rect(0, 0, this.width, this.height);
-        this.ctxBg.fill();
-      }
-      else {
-        this.setImage(img, this.ctxBg);
-      }
+      if (!img) { return true; }
+      
+      this.setImage(img, this.ctxBg);
     },
 
     setCursor: function(cursor) {
@@ -143,13 +175,76 @@
 
       $(canvasSave)
       .css({display:'none', position: 'absolute', left: 0, top: 0})
-      .attr('width', this.$canvas.attr('width'))
-      .attr('height', this.$canvas.attr('height'));
+      .attr('width', this.width)
+      .attr('height', this.height);
 
       if (withBg) { ctxSave.drawImage(this.canvasBg, 0, 0); }
       ctxSave.drawImage(this.canvas, 0, 0);
 
       return canvasSave.toDataURL();
+    },
+
+    /************************************
+     * prompts
+     ************************************/
+    _displayStatus: function(msg) {
+      var _this = this;
+
+      if(!this.$status) {
+        this.$status = $('<div class="wPaint-status"></div>');
+        this.$el.append(this.$status);
+      }
+
+      this.$status.html(msg);
+      clearTimeout(this.displayStatusTimer);
+
+      this.$status.fadeIn(500, function() {
+        _this.displayStatusTimer = setTimeout(function() { _this.$status.fadeOut(500); }, 1500);
+      });
+    },
+
+    _showModal: function($content) {
+      if (this.$el.children('.wPaint-modal-bg').length) {
+        var _this = this,
+        $modal = this.$el.children('.wPaint-modal'),
+        $bg = this.$el.children('.wPaint-modal-bg');
+
+        $modal.fadeOut(500, function(){
+          $modal.remove();
+          $bg.remove();
+          _this._createModal($content);
+        });
+      }
+      else {
+        this._createModal($content);
+      }
+    },
+
+    _createModal: function($content) {
+      $content = $('<div class="wPaint-modal-content"></div>').append($content.children());
+
+      var _this = this,
+          $bg = $('<div class="wPaint-modal-bg"></div>'),
+          $modal = $('<div class="wPaint-modal"></div>'),
+          $holder = $('<div class="wPaint-modal-holder"></div>'),
+          $close = $('<div class="wPaint-modal-close">X</div>');
+
+      $close.click(function(){
+        $modal.fadeOut(500, function() {
+          $modal.remove();
+          $bg.remove();
+        });
+      });
+
+      $modal.append($holder.append($content)).append($close);
+      this.$el.append($bg).append($modal);
+
+      $modal.css({
+        left: (this.$el.outerWidth()/2) - ($modal.outerWidth(true)/2),
+        top: (this.$el.outerHeight()/2) - ($modal.outerHeight(true)/2)
+      });
+
+      $modal.fadeIn(500);
     },
 
     /************************************
@@ -163,6 +258,40 @@
       return new Menu(this, name, options);
     },
 
+    // TODO: would be nice to do this better way
+    // for some reason when setting overflowY:auto with dynamic content makes the width act up
+    _fixMenus: function() {
+      for (var index in this.menus.all) {
+        var $select = this.menus.all[index].$menu.find('.wPaint-menu-select-holder');
+        if ($select.length) { $select.children().each(selectEach); }
+      }
+
+      function selectEach(){
+        var $menu = $(this).clone().appendTo('body');
+
+        if ($menu.outerHeight() === $menu.get(0).scrollHeight) {
+          $(this).css({overflowY:'auto'});
+        }
+
+        $menu.remove();
+      }
+    },
+
+    _closeSelectBoxes: function(item) {
+      var $selectBoxes = null;
+
+      for (var i in this.menus.all) {
+        $selectBoxes = this.menus.all[i].$menuHolder.children('.wPaint-menu-icon-select');
+
+        // hide any open select menus excluding the current menu
+        // this is to avoid the double toggle since there are some
+        // other events running here
+        if (item) { $selectBoxes = $selectBoxes.not('.wPaint-menu-icon-name-' + item.name); }
+
+        $selectBoxes.children('.wPaint-menu-select-holder').hide();
+      }
+    },
+
     /************************************
      * events
      ************************************/
@@ -170,8 +299,10 @@
       /* a blank helper function for post image load calls on canvas - can be extended by other plugins using the setImage called */
     },
 
-    bindMobile: function($el, preventDefault) {
-      $el.bind('touchstart touchmove touchend touchcancel', function () {
+    _bindMobileEvents: function() {
+      this.$el.bind('touchstart touchmove touchend touchcancel', function () {
+        event.preventDefault();
+
         var touches = event.changedTouches,
             first = touches[0],
             type = "";
@@ -192,11 +323,11 @@
         );
 
         first.target.dispatchEvent(simulatedEvent);
-        if(preventDefault) { event.preventDefault(); }
       });
     },
 
     _callFunc: function(e) {
+
       // TODO: this is where issues with mobile offsets are probably off
       var canvasOffset = this.$canvas.offset(),
           canvasEvent = e.canvasEvent.capitalize(),
@@ -211,6 +342,10 @@
 
       // run callback if set
       if(this.options['draw' + canvasEvent]) { this.options['_draw' + canvasEvent].apply(this, [e]); }
+    },
+
+    _stopPropagation: function(e) {
+      e.stopPropagation();
     },
 
     /************************************
@@ -252,6 +387,7 @@
       this.canvasTempTopNew = e.top;
 
       factor = factor || 2;
+
       // TODO: set this globally in _drawShapeDown (for some reason colors are being reset due to canvas resize - is there way to permanently set it)
       this.ctxTemp.fillStyle = this.options.fillStyle;
       this.ctxTemp.strokeStyle = this.options.strokeStyle;
@@ -268,8 +404,7 @@
      ****************************************/
     _drawDropperDown: function(e) {
       var pos = { x:e.pageX, y:e.pageY },
-          imageData = this.ctx.getImageData(0, 0, this.width, this.height),
-          pixel = this._getPixel(imageData, pos),
+          pixel = this._getPixel(this.ctx, pos),
           color = null;
 
       // if we get no color try getting from the background
@@ -280,9 +415,9 @@
 
       color = 'rgba(' + [ pixel.r, pixel.g, pixel.b, pixel.a ].join(',') + ')';
 
-      // set stroke or fill color here??
+      // set color from dropper here
       this.options[this.dropper] = color;
-      this.menu.all[this.icons[this.dropper].menu]._getIcon(this.dropper).wColorPicker('color', color);
+      this.menus.active._getIcon(this.dropper).wColorPicker('color', color);
     },
 
     _drawDropperUp: function() {
@@ -290,8 +425,9 @@
     },
 
     // get pixel data represented as RGBa color from pixel array.
-    _getPixel: function(imageData, pos) {
-      var pixelArray = imageData.data,
+    _getPixel: function(ctx, pos) {
+      var imageData = ctx.getImageData(0, 0, this.width, this.height),
+          pixelArray = imageData.data,
           base = ((pos.y * imageData.width) + pos.x) * 4;
       
       return {
@@ -310,12 +446,12 @@
       this.wPaint = wPaint;
       this.options = options;
       this.name = name;
-      this.type = !$('.wPaint-menu').length ? 'primary' : 'secondary';
+      this.type = !wPaint.menus.primary ? 'primary' : 'secondary';
       this.docked = true;
       this.dockOffset = {left:0, top:0};
 
       this.generate();
-  };
+  }
   
   Menu.prototype = {
     generate: function() {
@@ -326,8 +462,9 @@
       else { this.$menu.addClass('wPaint-menu-nohandle'); }
       
       if (this.type === 'primary' ) {
+
         // store the primary menu in primary object - we will need this reference later
-        this.wPaint.menu.primary = this;
+        this.wPaint.menus.primary = this;
 
         this.setOffsetLeft(this.options.offsetLeft);
         this.setOffsetTop(this.options.offsetTop);
@@ -346,10 +483,10 @@
 
       if(this.type === 'secondary') {
         if(this.options.alignment === 'horizontal') {
-          this.dockOffset.top = this.wPaint.menu.primary.$menu.outerHeight(true);
+          this.dockOffset.top = this.wPaint.menus.primary.$menu.outerHeight(true);
         }
         else {
-          this.dockOffset.left = this.wPaint.menu.primary.$menu.outerWidth(true);
+          this.dockOffset.left = this.wPaint.menus.primary.$menu.outerWidth(true);
         }
       }
     },
@@ -357,11 +494,13 @@
     // create / reset menu - will add new entries in the array
     reset: function() {
       var _this = this,
-          menu = $.fn.wPaint.menu[this.name];
+          menu = $.fn.wPaint.menus[this.name];
 
       for (var i in menu.items) {
+
         // only add unique (new) items (icons)
         if (!this.$menuHolder.children('.wPaint-menu-icon-name-' + i).length) {
+          
           // add the item name, we will need this internally
           menu.items[i].name = i;
 
@@ -369,13 +508,16 @@
           menu.items[i].img = menu.items[i].img || menu.img;
 
           // make self invoking to avoid overwrites
-          (function(item) { _this._appendItem(item); })(menu.items[i]);
+          (itemAppend)(menu.items[i]);
         }
       }
+
+      // self invoking function
+      function itemAppend(item) { _this._appendItem(item); };
     },
 
     _appendItem: function(item) {
-      var $item = this['_create' + item.type.capitalize()](item);
+      var $item = this['_createIcon' + item.icon.capitalize()](item);
 
       if (item.after) {
         this.$menuHolder.children('.wPaint-menu-icon-name-' + item.after).after($item);
@@ -415,96 +557,112 @@
       // if it's a secondary menu we want to check for snapping
       // on drag we set docked to false, on snap we set it back to true
       if (this.type === 'secondary') {
-        this.$menu.draggable('option', 'snap', this.wPaint.menu.primary.$menu);
-
-        this.$menu.draggable('option', 'start', function() {
-          _this.docked = false;
-          _this._setDrag();
-        });
-
-        this.$menu.draggable('option', 'stop', function() {
-          $.each(_this.$menu.data('draggable').snapElements, function(i, el){
-            var offset = _this.$menu.offset();
-                offsetPrimary = _this.wPaint.menu.primary.$menu.offset();
-
-            _this.dockOffset.left = offset.left - offsetPrimary.left;
-            _this.dockOffset.top = offset.top - offsetPrimary.top;
-            _this.docked = el.snapping;
-          });
-
-          _this._setDrag();
-        });
-
-        this.$menu.draggable('option', 'drag', function() { _this._setIndex(); });
+        this.$menu.draggable('option', 'snap', this.wPaint.menus.primary.$menu);
+        this.$menu.draggable('option', 'start', draggableStart);
+        this.$menu.draggable('option', 'stop', draggableStop);
+        this.$menu.draggable('option', 'drag', draggableDrag);
       }
 
       return $handle;
+
+      // draggable functions
+      function draggableStart() {
+        _this.docked = false;
+        _this._setDrag();
+      }
+
+      function draggableStop() {
+        $.each(_this.$menu.data('ui-draggable').snapElements, function(i, el){
+          var offset = _this.$menu.offset(),
+              offsetPrimary = _this.wPaint.menus.primary.$menu.offset();
+
+          _this.dockOffset.left = offset.left - offsetPrimary.left;
+          _this.dockOffset.top = offset.top - offsetPrimary.top;
+          _this.docked = el.snapping;
+        });
+
+        _this._setDrag();
+      }
+
+      function draggableDrag() {
+        _this._setIndex();
+      }
     },
 
     /************************************
      * generic icon
      ************************************/
-    _createGenericIcon: function(item) {
+    _createIconBase: function(item) {
       var _this = this,
           $icon = $('<div class="wPaint-menu-icon wPaint-menu-icon-name-' + item.name + '"></div>'),
           $iconImg = $('<div class="wPaint-menu-icon-img"></div>'),
-          width = $iconImg.width();
+          width = $iconImg.realWidth();
 
       $icon
-      .click(function(){
-        // hide any open select menus excluding the current menu - this is to avoid the double toggle since there are some other events running here
-        for(var i in _this.wPaint.menu.all) {
-          _this.wPaint.menu.all[i].$menuHolder.children('.wPaint-menu-icon-select').not('.wPaint-menu-icon-name-' + item.name).children('.wPaint-menu-select-holder').hide();
-        }
-      })
+      .mousedown($.proxy(this.wPaint._closeSelectBoxes, this.wPaint, item))
       .attr('title', item.title)
-      .mouseenter($.proxy(this._iconMouseenter, this))
-      .mouseleave($.proxy(this._iconMouseleave, this));
+      .mouseenter(mouseenter)
+      .mouseleave(mouseleave)
+      .click(click);
 
       // can have index:0 so be careful here
       if ($.isNumeric(item.index)) {
         $iconImg
         .css({
           backgroundImage: 'url(' + item.img + ')',
-          backgroundPosition: '-' + (item.index*width) + 'px 0px'
+          backgroundPosition: (-width*item.index) + 'px 0px'
         });
       }
 
-      // register the icons menu
-      this.wPaint.icons[item.name] = {menu:this.name};
-
       return $icon.append($iconImg);
+
+      function mouseenter() {
+        var $el = $(this);
+
+        $el.siblings('.hover').removeClass('hover');
+        if (!$el.hasClass('disabled')) { $el.addClass('hover'); }
+      }
+
+      function mouseleave() {
+        $(this).removeClass('hover');
+      }
+
+      function click() {
+        _this.wPaint.menus.active = _this;
+      }
     },
 
     /************************************
-     * group icon
+     * icon group
      ************************************/
-    _createGroupIcon: function(item) {
+    _createIconGroup: function(item) {
       var _this = this,
-          css = {backgroundImage:'url(' + item.img + ')', backgroundPosition:(-18*item.index) + 'px center'},
+          css = {backgroundImage:'url(' + item.img + ')'},
           $icon = this.$menuHolder.children('.wPaint-menu-icon-group-' + item.group),
           iconExists = $icon.length,
           $selectHolder = null,
           $option = null,
           $item = null,
-
-          func = function(e) {
-            _this._iconClick(e);
-            item.callback.apply(_this.wPaint, []);
-          };
+          width = 0;
 
       // crate icon if it doesn't exist yet
       if (!iconExists) {
-        $icon = this._createGenericIcon(item)
+        $icon = this._createIconBase(item)
         .addClass('wPaint-menu-icon-group wPaint-menu-icon-group-' + item.group)
-        .append('<div class="wPaint-menu-icon-group-arrow"></div>')
-        .click(func);
+        .bind('click.setIcon', setIconClick)
+        .mousedown($.proxy(this._iconClick, this));
       }
+
+      // get the proper width here now that we have the icon
+      // this is for the select box group not the main icon
+      width = $icon.children('.wPaint-menu-icon-img').realWidth();
+      css.backgroundPosition = (-width*item.index) + 'px center';
 
       // create selectHolder if it doesn't exist
       $selectHolder = $icon.children('.wPaint-menu-select-holder');
       if (!$selectHolder.length) {
         $selectHolder = this._createSelectBox($icon);
+        $selectHolder.children().click(selectHolderClick);
       }
 
       $item = $('<div class="wPaint-menu-icon-select-img"></div>')
@@ -513,17 +671,7 @@
 
       $option = this._createSelectOption($selectHolder, $item)
       .addClass('wPaint-menu-icon-name-' + item.name)
-      .click(function(e) {
-        // rebind the main icon when we select an option
-        $icon
-        .attr('title', item.title)
-        .unbind('click.setIcon')
-        .bind('click.setIcon', func)
-        
-        // run the callback right away when we select an option
-        $icon.children('.wPaint-menu-icon-img').css(css);
-        item.callback.apply(_this.wPaint, []);
-      });
+      .click(optionClick);
 
       // move select option into place if after is set
       if (item.after) {
@@ -532,25 +680,65 @@
 
       // we only want to return an icon to append on the first run of a group
       if (!iconExists) { return $icon; }
+
+      // local functions
+      function setIconClick() {
+
+        // only trigger if menu is not visible otherwise it will fire twice
+        // from the mousedown to open the menu which we want just to display the menu
+        // not fire the button callback
+        if(!$icon.children('.wPaint-menu-select-holder').is(':visible')) {
+          item.callback.apply(_this.wPaint, []);
+        }
+      }
+
+      function selectHolderClick() {
+        $icon.addClass('active').siblings('.active').removeClass('active');
+      }
+
+      function optionClick() {
+
+        // rebind the main icon when we select an option
+        $icon
+        .attr('title', item.title)
+        .unbind('click.setIcon')
+        .bind('click.setIcon', setIconClick);
+        
+        // run the callback right away when we select an option
+        $icon.children('.wPaint-menu-icon-img').css(css);
+        item.callback.apply(_this.wPaint, []);
+      }
+    },
+
+    /************************************
+     * icon generic
+     ************************************/
+    _createIconGeneric: function(item) {
+
+      // just a go between for the iconGeneric type
+      return this._createIconActivate(item);
     },
 
     /************************************
      * icon
      ************************************/
-    _createIcon: function(item) {
+    _createIconActivate: function(item) {
+
       // since we are piggy backing icon with the item.group
       // we'll just do a redirect and keep the code separate for group icons
-      if (item.group) { return this._createGroupIcon(item); }
+      if (item.group) { return this._createIconGroup(item); }
 
       var _this = this,
-          $icon = this._createGenericIcon(item);
+          $icon = this._createIconBase(item);
 
-      $icon.click(function(e) {
-        _this._iconClick(e);
-        item.callback.apply(_this.wPaint, [e]);
-      });
+      $icon.click(iconClick);
 
       return $icon;
+
+      function iconClick(e) {
+        if (item.icon !== 'generic') { _this._iconClick(e); }
+        item.callback.apply(_this.wPaint, [e]);
+      }
     },
 
     _isIconDisabled: function(name) {
@@ -561,8 +749,7 @@
       var $icon = this.$menuHolder.children('.wPaint-menu-icon-name-' + name);
 
       if (disabled) {
-        $icon.addClass('disabled');
-        $icon.removeClass('active hover');
+        $icon.addClass('disabled').removeClass('hover');
       }
       else {
         $icon.removeClass('disabled');
@@ -575,95 +762,109 @@
 
     _iconClick: function(e) {
       var $el = $(e.currentTarget),
-          menus = this.wPaint.menu.all;
+          menus = this.wPaint.menus.all;
 
       // make sure to loop using parent object - don't use .wPaint-menu-secondary otherwise we would hide menu for all canvases
       for (var menu in menus) {
         if (menus[menu] && menus[menu].type === 'secondary') { menus[menu].$menu.hide(); }  
       }
 
-      // set our visible menu to null, if we click on another menu button, it will get set in toggle function
-      this.wPaint.menu.visible = null;
-
       $el.siblings('.active').removeClass('active');
       if (!$el.hasClass('disabled')) { $el.addClass('active'); }
     },
 
-    _iconMouseenter: function(e) {
-      var $el = $(e.currentTarget);
+    /************************************
+     * iconToggle
+     ************************************/
+    _createIconToggle: function(item) {
+      var _this = this,
+          $icon = this._createIconBase(item);
 
-      $(e.currentTarget).siblings('.hover').removeClass('hover');
-      if (!$el.hasClass('disabled')) { $(e.currentTarget).addClass('hover'); }
-    },
+      $icon.click(iconClick);
 
-    _iconMouseleave: function(e) {
-      $(e.currentTarget).removeClass('hover');
-    },
+      return $icon;
 
-    _setColorPickerValue: function(icon, value) {
-      this._getIcon(icon).children('.wPaint-menu-icon-img').css('backgroundColor', value);
+      function iconClick() {
+        $icon.toggleClass('active');
+        item.callback.apply(_this.wPaint, [$icon.hasClass('active')]);
+      }
     },
 
     /************************************
      * select
      ************************************/
-    _createSelect: function(item) {
+    _createIconSelect: function(item) {
       var _this = this,
-          $icon = this._createGenericIcon(item),
+          $icon = this._createIconBase(item),
           $selectHolder = this._createSelectBox($icon),
           $option = null;
 
       // add values for select
       for (var i=0, ii=item.range.length; i<ii; i++) {
         $option = this._createSelectOption($selectHolder, item.range[i]);
-        
-        $option.click(function() {
-          $icon.children('.wPaint-menu-icon-img').html($(this).html());
-          item.callback.apply(_this.wPaint, [$(this).html()]);
-        });
-
+        $option.click(optionClick);
         if (item.useRange) { $option.css(item.name, item.range[i]); }
       }
 
       return $icon;
+
+      function optionClick(e) {
+        $icon.children('.wPaint-menu-icon-img').html($(e.currentTarget).html());
+        item.callback.apply(_this.wPaint, [$(e.currentTarget).html()]);
+      }
     },
 
     _createSelectBox: function($icon) {
-      var $selectHolder = $('<div class="wPaint-menu-select-holder"></div>'),
+      var _this = this,
+          $selectHolder = $('<div class="wPaint-menu-select-holder"></div>'),
           $select = $('<div class="wPaint-menu-select"></div>'),
           timer = null;
 
       $selectHolder
-      .hide()
-      .click(function(e){
-        e.stopPropagation();
-        $selectHolder.hide();
-      });
+      .bind('mousedown mouseup', this.wPaint.stopPropagation)
+      .click(clickSelectHolder)
+      .hide();
 
       // of hozizontal we'll pop below the icon
       if (this.options.alignment === 'horizontal') {
-        $selectHolder.css({left:0, top:$icon.children('.wPaint-menu-icon-img').outerHeight(true)});
+        $selectHolder.css({left:0, top:$icon.children('.wPaint-menu-icon-img').realHeight('outer', true)});
       }
       // vertical we'll pop to the right
       else {
-        $selectHolder.css({left:$icon.children('.wPaint-menu-icon-img').outerWidth(true), top:0});
+        $selectHolder.css({left:$icon.children('.wPaint-menu-icon-img').realWidth('outer', true), top:0});
       }
 
       $icon
       .addClass('wPaint-menu-icon-select')
+      .append('<div class="wPaint-menu-icon-group-arrow"></div>')
       .append($selectHolder.append($select));
 
       // for groups we want to add a delay before the selectBox pops up
       if ($icon.hasClass('wPaint-menu-icon-group')) {
         $icon
-        .mousedown(function(){ timer = setTimeout(function(){ $selectHolder.toggle(); }, 400); })
-        .mouseup(function(){ clearTimeout(timer); });
+        .mousedown(iconMousedown)
+        .mouseup(iconMouseup);
       }
-      else {
-        $icon.click(function(){ $selectHolder.toggle(); });
-      }
+      else { $icon.click(iconClick); }
 
       return $selectHolder;
+
+      function clickSelectHolder(e) {
+        e.stopPropagation();
+        $selectHolder.hide();
+      }
+
+      function iconMousedown() {
+        timer = setTimeout(function() { $selectHolder.toggle(); }, 200);
+      }
+
+      function iconMouseup() {
+        clearTimeout(timer);
+      }
+
+      function iconClick() {
+        $selectHolder.toggle();
+      }
     },
 
     _createSelectOption: function($selectHolder, value) {
@@ -685,50 +886,63 @@
     /************************************
      * color picker
      ************************************/
-    _createColorPicker: function(item) {
+    _createIconColorPicker: function(item) {
       var _this = this,
-          $icon = this._createGenericIcon(item);
+          $icon = this._createIconBase(item);
 
       $icon
-      .click(function() {
-        // if we happen to click on this while in dropper mode just revert to previous
-        if (_this.wPaint.options.mode === 'dropper') { _this.wPaint.setMode(_this.wPaint.previousMode); }
-      })
+      .click(iconClick)
       .addClass('wPaint-menu-colorpicker')
       .wColorPicker({
         mode: 'click',
         generateButton: false,
-        onSelect: function(color) {
-          item.callback.apply(_this.wPaint, [color]);
-        },
         dropperButton: true,
-        onDropper: function() {
-          $icon.trigger('click');
-          _this.wPaint.dropper = item.name;
-          _this.wPaint.setMode('dropper');
-        }
+        onSelect: iconOnSelect,
+        onDropper: iconOnDropper
       });
 
       return $icon;
+
+      function iconClick() {
+
+        // if we happen to click on this while in dropper mode just revert to previous
+        if (_this.wPaint.options.mode === 'dropper') { _this.wPaint.setMode(_this.wPaint.previousMode); }
+      }
+
+      function iconOnSelect(color) {
+        item.callback.apply(_this.wPaint, [color]);
+      }
+
+      function iconOnDropper() {
+        $icon.trigger('click');
+        _this.wPaint.dropper = item.name;
+        _this.wPaint.setMode('dropper');
+      }
+    },
+
+    _setColorPickerValue: function(icon, value) {
+      this._getIcon(icon).children('.wPaint-menu-icon-img').css('backgroundColor', value);
     },
 
     /************************************
      * menu toggle
      ************************************/
-    _createMenuToggle: function(item) {
+    _createIconMenu: function(item) {
       var _this = this,
-          $icon = this._createIcon(item);
+          $icon = this._createIconActivate(item);
 
-      $icon.click(function() {
+      $icon.click(iconClick);
+
+      return $icon;
+
+      function iconClick() {
         _this.wPaint.setCursor(item.name);
 
         // the items name here will be the menu name
-        var menu = _this.wPaint.menu.all[item.name];
+        var menu = _this.wPaint.menus.all[item.name];
         menu.$menu.toggle();
         menu._setDrag();
-      });
-
-      return $icon;
+      }
     },
 
     // here we specify which menu will be dragged
@@ -737,22 +951,21 @@
           drag = null, stop = null;
 
       if ($menu.is(':visible')) {
-        this.wPaint.menu.visible = this;
-
         if (this.docked) {
+
           // make sure we are setting proper menu object here
           drag = stop = $.proxy(this._setPosition, this);
           this._setPosition();
         }
 
         // register drag/stop events
-        this.wPaint.menu.primary.$menu.draggable('option', 'drag', drag);
-        this.wPaint.menu.primary.$menu.draggable('option', 'stop', stop);
+        this.wPaint.menus.primary.$menu.draggable('option', 'drag', drag);
+        this.wPaint.menus.primary.$menu.draggable('option', 'stop', stop);
       }
     },
 
     _setPosition: function() {
-      var offset = this.wPaint.menu.primary.$menu.position();
+      var offset = this.wPaint.menus.primary.$menu.position();
 
       this.$menu.css({
         left: offset.left + this.dockOffset.left,
@@ -761,7 +974,7 @@
     },
 
     _setIndex: function() {
-      var primaryOffset = this.wPaint.menu.primary.$menu.offset(),
+      var primaryOffset = this.wPaint.menus.primary.$menu.offset(),
           secondaryOffset = this.$menu.offset();
 
       if (
@@ -828,65 +1041,65 @@
       return wPaint;
     }
 
-    return this.each(function() {
+    function elEach() {
       if (!$.support.canvas) {
         $(this).html("Browser does not support HTML5 canvas, please upgrade to a more modern browser.");
         return false;
       }
 
       get(this);
-    });
-  };
+    }
 
-  /************************************************************************
-   * menus - store menu objects here
-   ************************************************************************/
-  $.fn.wPaint.menu = {};
-
-  /************************************************************************
-   * cursors
-   ************************************************************************/
-  $.fn.wPaint.cursors = {
-    default: 'url("/img/cursor-crosshair.png") 7 7, default',
-    dropper: 'url("/img/cursor-dropper.png") 0 12, default'
+    return this.each(elEach);
   };
 
   /************************************************************************
    * extend
    ************************************************************************/
-  $.fn.wPaint.extend = function(funcs) {
-    for(func in funcs) {
-      (function(func) {
-        if(Paint.prototype[func]) {
-          var tmpFunc = Paint.prototype[func],
-              newFunc = funcs[func];
-          
-          Paint.prototype[func] = function() {
-            tmpFunc.apply(this, arguments);
-            newFunc.apply(this, arguments);
-          }
-        }
-        else {
-          Paint.prototype[func] = funcs[func];
-        }
-      })(func);
-    }
+  $.fn.wPaint.extend = function(funcs, protoType) {
+    protoType = protoType === 'menu' ? Menu.prototype : Paint.prototype;
+
+    var func = function(func) {
+      if (protoType[func]) {
+        var tmpFunc = Paint.prototype[func],
+            newFunc = funcs[func];
+        
+        protoType[func] = function() {
+          tmpFunc.apply(this, arguments);
+          newFunc.apply(this, arguments);
+        };
+      }
+      else {
+        protoType[func] = funcs[func];
+      }
+    };
+
+    for(var index in funcs) { (func)(index); }
   };
 
   /************************************************************************
-   * defaults
-   ************************************************************************/  
+   * Init holders
+   ************************************************************************/
+  $.fn.wPaint.menus = {};
+
+  $.fn.wPaint.cursors = {
+    'default': 'url("/img/cursor-crosshair.png") 7 7, default',
+    dropper: 'url("/img/cursor-dropper.png") 0 12, default'
+  };
+
   $.fn.wPaint.defaults = {
     theme:       'classic',     // set theme
     mode:        'pencil',   // set mode
     width: null, // if not set will auto detect
     height: null, // if not set will auto detect
+    autoScaleImage: true, // when setting image or imageBg - auto size images to size of canvas.
+    autoCenterImage: true, // if true will center image otherwise, goes left/top corner
     menuHandle: true,
     menuAlignment: 'horizontal',
     menuOffsetLeft: 5,
-    menuOffsetTop: -35,
-    dropperIcon: 'url("/img/icon-dropper.png") 0 12, default',
-    bg: '#336633'
+    menuOffsetTop: -50,
+    dropperIcon: 'url("/img/icon-dropper.png") 0 12, default'//,
+    //bg: '#f0f0f0'
   };
 })(jQuery);
 
@@ -894,10 +1107,37 @@
  * Additional Utils
  ****************************************/
 if(!String.prototype.capitalize) {
-    Object.defineProperty(String.prototype, 'capitalize', {
-        value: function() {
-            return this.slice(0,1).toUpperCase() + this.slice(1);
-        },
-        enumerable: false
-    });
+  String.prototype.capitalize = function() {
+    return this.slice(0,1).toUpperCase() + this.slice(1);
+  };
 }
+
+(function($) {
+  $.fn.realWidth = function(type, margin) {
+    var width = null, $div = null, method = null;
+
+    type = type === 'inner' || type === 'outer' ? type : '';
+    method = type === '' ? 'width' : type + 'Width';
+    margin = margin === true ? true : false;
+    $div = $(this).clone().css({position:'absolute', left:-10000}).appendTo('body');
+    width = margin ? $div[method](margin) : $div[method]();
+
+    $div.remove();
+
+    return width;
+  };
+
+  $.fn.realHeight = function(type, margin) {
+    var height = null, $div = null, method = null;
+
+    type = type === 'inner' || type === 'outer' ? type : '';
+    method = type === '' ? 'height' : type + 'Height';
+    margin = margin === true ? true : false;
+    $div = $(this).clone().css({position:'absolute', left:-10000}).appendTo('body');
+    height = margin ? $div[method](margin) : $div[method]();
+
+    $div.remove();
+
+    return height;
+  };
+})(jQuery);

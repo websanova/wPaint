@@ -16,7 +16,11 @@ module.exports = function(grunt) {
         globals: {
           'window': true,
           'jQuery': true,
-          'document': true
+          'document': true,
+          'Image': true,
+          'setTimeout': true,
+          'clearTimeout': true,
+          'event': true
         }
       },
       files: {
@@ -54,5 +58,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', [ 'stylus', 'jshint', 'uglify' ]);
+  grunt.registerTask('default', [ 'jshint' ]);
 };

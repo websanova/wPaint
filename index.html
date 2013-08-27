@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Websanova :: WPaint</title>
+  <title>Websanova :: wPaint</title>
 
   <!-- filestart -->
   <link rel="icon" type="image/vnd.microsoft.icon"  href="./demo/img/favicon.ico" />
@@ -25,32 +25,33 @@
   <!-- headend -->
 
   <div id="content">
-    <h1 id="plugin-name">mousestop.js</h1>
+    <h1 id="plugin-name">wPaint.js</h1>
     
     <!-- jQuery UI -->
-    <script type="text/javascript" src="./src/jquery.ui.core.min.js"></script>
-    <script type="text/javascript" src="./src/jquery.ui.widget.min.js"></script>
-    <script type="text/javascript" src="./src/jquery.ui.mouse.min.js"></script>
-    <script type="text/javascript" src="./src/jquery.ui.draggable.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.core.1.10.3.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.widget.1.10.3.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.mouse.1.10.3.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.draggable.1.10.3.min.js"></script>
     
     <!-- wColorPicker -->
-    <link rel="Stylesheet" type="text/css" href="./src/wColorPicker.min.css" />
-    <script type="text/javascript" src="./src/wColorPicker.min.js"></script>
+    <link rel="Stylesheet" type="text/css" href="./lib/wColorPicker.min.css" />
+    <script type="text/javascript" src="./lib/wColorPicker.min.js"></script>
     
     <!-- canvas extensions -->
-    <script type="text/javascript" src="./src/diamond.js"></script>
-    <script type="text/javascript" src="./src/ellipse.js"></script>
-    <script type="text/javascript" src="./src/fillArea.js"></script>
-    <script type="text/javascript" src="./src/hexagon.js"></script>
-    <script type="text/javascript" src="./src/pentagon.js"></script>
-    <script type="text/javascript" src="./src/roundedRect.js"></script>
+    <script type="text/javascript" src="./lib/diamond.js"></script>
+    <script type="text/javascript" src="./lib/ellipse.js"></script>
+    <script type="text/javascript" src="./lib/fillArea.js"></script>
+    <script type="text/javascript" src="./lib/hexagon.js"></script>
+    <script type="text/javascript" src="./lib/pentagon.js"></script>
+    <script type="text/javascript" src="./lib/roundedRect.js"></script>
 
     <!-- wPaint -->
     <link rel="Stylesheet" type="text/css" href="./src/wPaint.css" />
     <script type="text/javascript" src="./src/wPaint.js"></script>
     <script type="text/javascript" src="./src/wPaint.menu.main.js"></script>
     <script type="text/javascript" src="./src/wPaint.menu.main.shapes.js"></script>
-    <script type="text/javascript" src="./src/wPaint.menu.text.js"></script>
+    <!--script type="text/javascript" src="./src/wPaint.menu.text.js"></script>
+    <script type="text/javascript" src="./src/wPaint.menu.main.file.js"></script-->
 
     <div class="content-box">
       <div id="wPaint-demo1"></div>
@@ -67,9 +68,10 @@
       </style>
 
       <script type="text/javascript">
-        $('#wPaint-demo1').wPaint();
-
-        $('#wPaint-demo1').wPaint('bg', '/img/icons-menu-main.png');
+        $(document).ready(function(){
+          $('#wPaint-demo1').wPaint();
+          $('#wPaint-demo1').wPaint('image', '/img/demo/small-test.png');
+        });
 
         function save() {
           $('body').append($('<img/>').attr('src', $('#wPaint-demo1').wPaint('image')));
@@ -77,6 +79,8 @@
       </script>
 
       <!--
+        -since wPaint contains multiple components the functions will need to be called when dom is ready, there is an option for asyncLoad true, however in this case you may experience strange things if the files are loaded out of order.  In this case make sure your files are ALL in the same file.  If you have a concat tool this would be a good place to do it if you absolutely want to load before dom ready.
+
         -set background color/image on the fly (repeat image)
         -resize image, ratio, etc...(check github not on this ratio thing)
 
@@ -114,6 +118,7 @@
               colorPicker
               select
               menuToggle (to toggle another menu)
+              iconToggle (to toggle states true/false)
             clickable (if icon will execute as a click changing active state - for instance undo/redo should not change the active icon, note this will NOT prevent the callbacks from running)
             after (specicy icon you want the icon to appear after (default is object order))
             index (of icon in image file, starting at 0 for first icon from left)
@@ -145,6 +150,7 @@
         -adding cursors
           -setup file, setup wPaint.cursors by name, if not set will go to default.
           -some customization for eraser - we can also add some extra level of customization to any method by overloading it, in this case we do this for the eraser to get the different sizes.
+          -notice there is a strange issue with chrome browsers and cursor position.  There are two ways around it.  Always set your cursors 1 pixel larger of transparent space and adjust it correctly that way, or make the dimensions 11.99 if it is 12
 
         -set image globall and locally
 
@@ -155,11 +161,23 @@
         -stacked icons - this is easy all you need to do is set the "group" param to the group you want it to be a part of
         -ordering will be based on the order the object is in, so change order accoringly.  the first icon in the group will be the starting default, if you want to change it order them in a different order and set that as the default mode
 
+        -dblclick or mousedown with short delay opens up menu group
+
         -allow multiple themes theme: 'classic large' - parse based on spaces
 
-        http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
+        -both image and bg can be either color or image
+
+        autoScaleImg and autoCenterImg properties for adding images default is true and true
+
+        -async loading - when setting up your own plugins
+
+        -extending types menu, paint(default)
+
+        http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/ (comment on article when wPaint is live - i've wrapped the plugin into canvas see here - also see it in action in the wPaint plugin)
         http://js-bits.blogspot.com/2010/07/canvas-rounded-corner-rectangles.html
         http://www.williammalone.com/articles/html5-canvas-example/
+
+        - _displayStatus and modals to be used internally if necessary
 
       -->
 

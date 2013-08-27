@@ -1,158 +1,150 @@
-(function($) {
+// extend menu
+$.extend(true, $.fn.wPaint.menus.main.items, {
+  rectangle: {group:'shapes'},
+  roundedRect: {title:'Rounded Rectangle', icon:'activate', index:0, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('roundedRect'); }},
+  square: {title:'Square', icon:'activate', index:1, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('square'); }},
+  roundedSquare: {title:'Rounded Square', icon:'activate', index:2, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('roundedSquare'); }},
+  diamond: {title:'Diamond', icon:'activate', index:4, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('diamond'); }},
 
-  $.fn.wPaint.menu.main.items.rectangle.group = 'shapes';
-  $.fn.wPaint.menu.main.items.roundedRect = {title:'Rounded Rectangle', type:'icon', index:0, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('roundedRect'); }};
-  $.fn.wPaint.menu.main.items.square = {title:'Square', type:'icon', index:1, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('square'); }};
-  $.fn.wPaint.menu.main.items.roundedSquare = {title:'Rounded Square', type:'icon', index:2, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('roundedSquare'); }};
-  $.fn.wPaint.menu.main.items.diamond = {title:'Diamond', type:'icon', index:4, group:'shapes', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('diamond'); }};
+  ellipse: {group:'shapes2'},
+  circle: {title:'Circle', icon:'activate', index:3, group:'shapes2', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('circle'); }},
+  pentagon: {title:'Pentagon', icon:'activate', index:5, group:'shapes2', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('pentagon'); }},
+  hexagon: {title:'Hexagon', icon:'activate', index:6, group:'shapes2', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('hexagon'); }}
+});
 
-  $.fn.wPaint.menu.main.items.ellipse.group = 'shapes2';
-  $.fn.wPaint.menu.main.items.circle = {title:'Circle', type:'icon', index:3, group:'shapes2', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('circle'); }};
-  $.fn.wPaint.menu.main.items.pentagon = {title:'Pentagon', type:'icon', index:5, group:'shapes2', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('pentagon'); }};
-  $.fn.wPaint.menu.main.items.hexagon = {title:'Hexagon', type:'icon', index:6, group:'shapes2', img:'/img/icons-menu-main-shapes.png', callback:function(){ this.setMode('hexagon'); }};
+// extend functions
+$.fn.wPaint.extend({
+  /****************************************
+   * roundedRect
+   ****************************************/
+  _drawRoundedRectDown: function(e) { this._drawShapeDown(e); },
 
-  // triangle after ellipse
-  // star
-  // pentagon
-  // hexagon
-  // trapezoid
-  // octagon
+  _drawRoundedRectMove: function(e) {
+    this._drawShapeMove(e);
 
+    var radius = e.w > e.h ? e.h/e.w : e.w/e.h;
 
-  $.fn.wPaint.extend({
-    /****************************************
-     * roundedRect
-     ****************************************/
-    _drawRoundedRectDown: function(e) { this._drawShapeDown(e); },
+    this.ctxTemp.roundedRect(e.x, e.y, e.w, e.h, Math.ceil(radius*(e.w*e.h*0.001)));
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    _drawRoundedRectMove: function(e) {
-      this._drawShapeMove(e);
+  _drawRoundedRectUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  },
 
-      var radius = e.w > e.h ? e.h/e.w : e.w/e.h;
+  /****************************************
+   * square
+   ****************************************/
+  _drawSquareDown: function(e) { this._drawShapeDown(e); },
 
-      this.ctxTemp.roundedRect(e.x, e.y, e.w, e.h, Math.ceil(radius*(e.w*e.h*0.001)));
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
+  _drawSquareMove: function(e) {
+    this._drawShapeMove(e);
 
-    _drawRoundedRectUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    },
+    var l = e.w > e.h ? e.h : e.w;
 
-    /****************************************
-     * square
-     ****************************************/
-    _drawSquareDown: function(e) { this._drawShapeDown(e); },
+    this.ctxTemp.rect(e.x, e.y, l, l);
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    _drawSquareMove: function(e) {
-      this._drawShapeMove(e);
+  _drawSquareUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  },
 
-      var l = e.w > e.h ? e.h : e.w;
+  /****************************************
+   * roundedSquare
+   ****************************************/
+  _drawRoundedSquareDown: function(e) { this._drawShapeDown(e); },
 
-      this.ctxTemp.rect(e.x, e.y, l, l);
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
+  _drawRoundedSquareMove: function(e) {
+    this._drawShapeMove(e);
 
-    _drawSquareUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    },
+    var l = e.w > e.h ? e.h : e.w;
 
-    /****************************************
-     * roundedSquare
-     ****************************************/
-    _drawRoundedSquareDown: function(e) { this._drawShapeDown(e); },
+    this.ctxTemp.roundedRect(e.x, e.y, l, l, Math.ceil(l*l*0.001));
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    _drawRoundedSquareMove: function(e) {
-      this._drawShapeMove(e);
+  _drawRoundedSquareUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  },
 
-      var l = e.w > e.h ? e.h : e.w;
+  /****************************************
+   * diamond
+   ****************************************/
+  _drawDiamondDown: function(e) { this._drawShapeDown(e); },
 
-      this.ctxTemp.roundedRect(e.x, e.y, l, l, Math.ceil(l*l*0.001));
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
+  _drawDiamondMove: function(e) {
+    this._drawShapeMove(e);
 
-    _drawRoundedSquareUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    },
+    this.ctxTemp.diamond(e.x, e.y, e.w, e.h);
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    /****************************************
-     * diamond
-     ****************************************/
-    _drawDiamondDown: function(e) { this._drawShapeDown(e); },
+  _drawDiamondUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  },
 
-    _drawDiamondMove: function(e) {
-      this._drawShapeMove(e);
+  /****************************************
+   * circle
+   ****************************************/
+  _drawCircleDown: function(e) { this._drawShapeDown(e); },
 
-      this.ctxTemp.diamond(e.x, e.y, e.w, e.h);
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
+  _drawCircleMove: function(e) {
+    this._drawShapeMove(e);
 
-    _drawDiamondUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    },
+    var l = e.w > e.h ? e.h : e.w;
 
-    /****************************************
-     * circle
-     ****************************************/
-    _drawCircleDown: function(e) { this._drawShapeDown(e); },
+    this.ctxTemp.ellipse(e.x, e.y, l, l);
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    _drawCircleMove: function(e) {
-      this._drawShapeMove(e);
+  _drawCircleUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  },
 
-      var l = e.w > e.h ? e.h : e.w;
+  /****************************************
+   * pentagon
+   ****************************************/
+  _drawPentagonDown: function(e) { this._drawShapeDown(e); },
 
-      this.ctxTemp.ellipse(e.x, e.y, l, l);
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
+  _drawPentagonMove: function(e) {
+    this._drawShapeMove(e);
 
-    _drawCircleUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    },
+    this.ctxTemp.pentagon(e.x, e.y, e.w, e.h);
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    /****************************************
-     * pentagon
-     ****************************************/
-    _drawPentagonDown: function(e) { this._drawShapeDown(e); },
+  _drawPentagonUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  },
 
-    _drawPentagonMove: function(e) {
-      this._drawShapeMove(e);
+  /****************************************
+   * hexagon
+   ****************************************/
+  _drawHexagonDown: function(e) { this._drawShapeDown(e); },
 
-      this.ctxTemp.pentagon(e.x, e.y, e.w, e.h);
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
+  _drawHexagonMove: function(e) {
+    this._drawShapeMove(e);
 
-    _drawPentagonUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    },
+    this.ctxTemp.hexagon(e.x, e.y, e.w, e.h);
+    this.ctxTemp.stroke();
+    this.ctxTemp.fill();
+  },
 
-    /****************************************
-     * hexagon
-     ****************************************/
-    _drawHexagonDown: function(e) { this._drawShapeDown(e); },
-
-    _drawHexagonMove: function(e) {
-      this._drawShapeMove(e);
-
-      this.ctxTemp.hexagon(e.x, e.y, e.w, e.h);
-      this.ctxTemp.stroke();
-      this.ctxTemp.fill();
-    },
-
-    _drawHexagonUp: function(e) {
-      this._drawShapeUp(e);
-      this._addUndo();
-    }
-  });
-
-})(jQuery);
+  _drawHexagonUp: function(e) {
+    this._drawShapeUp(e);
+    this._addUndo();
+  }
+});
