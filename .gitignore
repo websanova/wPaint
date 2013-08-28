@@ -1,3 +1,5 @@
 uploads
 node_modules/
 npm-debug.txt
+plugins/file
+plugins/shapes

@@ -27,7 +27,7 @@ $.fn.wPaint.extend({
   generate: function() {
     this.$textCalc = $('<div></div>').hide();
     this.$textInput = $('<textarea class="_wPaint_textInput" spellcheck="false"></textarea>')
-    .mousedown(this._stopPropagation) // make sure clicking on the textInput doesn't trigger another textInput
+    .on('mousedown', this._stopPropagation) // make sure clicking on the textInput doesn't trigger another textInput
     .css({position:'absolute'})
     .hide();
     
@@ -43,12 +43,12 @@ $.fn.wPaint.extend({
     // in case we click on another element while typing - just auto set the text
     for (var i in this.menus.all) {
       this.menus.all[i].$menu
-      .click(inputClick)
-      .mousedown(this._stopPropagation);
+      .on('click', inputClick)
+      .on('mousedown', this._stopPropagation);
     }
 
     // same idea here for clicking outside of the canvas area
-    $(document).mousedown(inputClick);
+    $(document).on('mousedown', inputClick);
 
     function inputClick() {
       _this._drawTextIfNotEmpty();

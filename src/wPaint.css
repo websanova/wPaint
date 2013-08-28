@@ -45,7 +45,7 @@
   border-radius: 5px;
   border-top-left-radius: 0px;
   box-shadow: 1px 1px 2px #666;
-  background-color: #F0F0F0;
+  
   overflow: hidden;
 }
 .wPaint-menu-select {
@@ -61,10 +61,14 @@
 }
 .wPaint-menu-select-option {
   max-width: 50px;
-  padding: 4px;
+  padding: 4px 7px;
   border-top: solid #CACACA 1px;
   cursor: pointer;
+  background-color: #F0F0F0;
   box-shadow: inset 2px 2px 3px #fff;
+}
+.wPaint-menu-icon-group .wPaint-menu-select-option {
+  padding: 4px;
 }
 .wPaint-menu-select-option.first {
   border-top: 0px;
@@ -108,7 +112,7 @@
   width: 18px;
 	height: 18px;
   line-height: 18px;
-  font-size:12px;
+  font-size: 12px;
   font-family: verdana;
   font-weight: bold;
   text-align: center;

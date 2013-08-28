@@ -24,16 +24,23 @@
 
       var _this = this;
 
-      // create canvases
+      // create bg canvases
       createCanvas('bg');
-      createCanvas('').mousedown(canvasMousedown);
+      
+      // create drawing canvas
+      createCanvas('')
+      .on('mousedown', canvasMousedown)
+      .bindMobileEvents();
+      
+      // create temp canvas for drawing shapes temporarily
+      // before transfering to main canvas
       createCanvas('temp').hide();
       
       // event handlers for drawing
       $(document)
-      .mousemove(documentMousemove)
-      .mousedown($.proxy(this._closeSelectBoxes, this))
-      .mouseup(documentMouseup);
+      .on('mousemove', documentMousemove)
+      .on('mousedown', $.proxy(this._closeSelectBoxes, this))
+      .on('mouseup', documentMouseup);
 
       // automatically appends each canvas
       // also returns the jQuery object so we can chain events right off the function call.
@@ -100,7 +107,6 @@
       }
 
       this._fixMenus();
-      this._bindMobileEvents();
 
       // initialize active menu button
       this.menus.primary._getIcon(this.options.mode).trigger('click');      
@@ -236,7 +242,7 @@
           $holder = $('<div class="wPaint-modal-holder"></div>'),
           $close = $('<div class="wPaint-modal-close">X</div>');
 
-      $close.click(function(){
+      $close.on('click', function(){
         $modal.fadeOut(500, function() {
           $modal.remove();
           $bg.remove();
@@ -304,33 +310,6 @@
      ************************************/
     _imageOnload: function() {
       /* a blank helper function for post image load calls on canvas - can be extended by other plugins using the setImage called */
-    },
-
-    _bindMobileEvents: function() {
-      this.$el.bind('touchstart touchmove touchend touchcancel', function () {
-        event.preventDefault();
-
-        var touches = event.changedTouches,
-            first = touches[0],
-            type = "";
-
-        switch (event.type) {
-            case "touchstart": type = "mousedown"; break; 
-            case "touchmove": type = "mousemove"; break; 
-            case "touchend": type = "mouseup"; break; 
-            default: return;
-        }
-
-        var simulatedEvent = document.createEvent("MouseEvent"); 
-
-        simulatedEvent.initMouseEvent(
-            type, true, true, window, 1, 
-            first.screenX, first.screenY, first.clientX, first.clientY, 
-            false, false, false, false, 0/*left*/, null
-        );
-
-        first.target.dispatchEvent(simulatedEvent);
-      });
     },
 
     _callShapeFunc: function(e) {
@@ -495,7 +474,7 @@
         else {
           this.dockOffset.left = this.wPaint.menus.primary.$menu.outerWidth(true);
         }
-      }
+      }      
     },
 
     // create / reset menu - will add new entries in the array
@@ -570,6 +549,8 @@
         this.$menu.draggable('option', 'drag', draggableDrag);
       }
 
+      $handle.bindMobileEvents();
+
       return $handle;
 
       // draggable functions
@@ -606,11 +587,11 @@
           width = $iconImg.realWidth();
 
       $icon
-      .mousedown($.proxy(this.wPaint._closeSelectBoxes, this.wPaint, item))
       .attr('title', item.title)
-      .mouseenter(mouseenter)
-      .mouseleave(mouseleave)
-      .click(click);
+      .on('mousedown', $.proxy(this.wPaint._closeSelectBoxes, this.wPaint, item))
+      .on('mouseenter', mouseenter)
+      .on('mouseleave', mouseleave)
+      .on('click', click);
 
       // can have index:0 so be careful here
       if ($.isNumeric(item.index)) {
@@ -656,8 +637,8 @@
       if (!iconExists) {
         $icon = this._createIconBase(item)
         .addClass('wPaint-menu-icon-group wPaint-menu-icon-group-' + item.group)
-        .bind('click.setIcon', setIconClick)
-        .mousedown($.proxy(this._iconClick, this));
+        .on('click.setIcon', setIconClick)
+        .on('mousedown', $.proxy(this._iconClick, this));
       }
 
       // get the proper width here now that we have the icon
@@ -669,7 +650,7 @@
       $selectHolder = $icon.children('.wPaint-menu-select-holder');
       if (!$selectHolder.length) {
         $selectHolder = this._createSelectBox($icon);
-        $selectHolder.children().click(selectHolderClick);
+        $selectHolder.children().on('click', selectHolderClick);
       }
 
       $item = $('<div class="wPaint-menu-icon-select-img"></div>')
@@ -678,7 +659,7 @@
 
       $option = this._createSelectOption($selectHolder, $item)
       .addClass('wPaint-menu-icon-name-' + item.name)
-      .click(optionClick);
+      .on('click', optionClick);
 
       // move select option into place if after is set
       if (item.after) {
@@ -708,8 +689,8 @@
         // rebind the main icon when we select an option
         $icon
         .attr('title', item.title)
-        .unbind('click.setIcon')
-        .bind('click.setIcon', setIconClick);
+        .off('click.setIcon')
+        .on('click.setIcon', setIconClick);
         
         // run the callback right away when we select an option
         $icon.children('.wPaint-menu-icon-img').css(css);
@@ -738,7 +719,7 @@
       var _this = this,
           $icon = this._createIconBase(item);
 
-      $icon.click(iconClick);
+      $icon.on('click', iconClick);
 
       return $icon;
 
@@ -787,7 +768,7 @@
       var _this = this,
           $icon = this._createIconBase(item);
 
-      $icon.click(iconClick);
+      $icon.on('click', iconClick);
 
       return $icon;
 
@@ -809,7 +790,7 @@
       // add values for select
       for (var i=0, ii=item.range.length; i<ii; i++) {
         $option = this._createSelectOption($selectHolder, item.range[i]);
-        $option.click(optionClick);
+        $option.on('click', optionClick);
         if (item.useRange) { $option.css(item.name, item.range[i]); }
       }
 
@@ -828,8 +809,8 @@
           timer = null;
 
       $selectHolder
-      .bind('mousedown mouseup', this.wPaint._stopPropagation)
-      .click(clickSelectHolder)
+      .on('mousedown mouseup', this.wPaint._stopPropagation)
+      .on('click', clickSelectHolder)
       .hide();
 
       // of hozizontal we'll pop below the icon
@@ -849,10 +830,10 @@
       // for groups we want to add a delay before the selectBox pops up
       if ($icon.hasClass('wPaint-menu-icon-group')) {
         $icon
-        .mousedown(iconMousedown)
-        .mouseup(iconMouseup);
+        .on('mousedown', iconMousedown)
+        .on('mouseup', iconMouseup);
       }
-      else { $icon.click(iconClick); }
+      else { $icon.on('click', iconClick); }
 
       return $selectHolder;
 
@@ -898,7 +879,7 @@
           $icon = this._createIconBase(item);
 
       $icon
-      .click(iconClick)
+      .on('click', iconClick)
       .addClass('wPaint-menu-colorpicker')
       .wColorPicker({
         mode: 'click',
@@ -938,7 +919,7 @@
       var _this = this,
           $icon = this._createIconActivate(item);
 
-      $icon.click(iconClick);
+      $icon.on('click', iconClick);
 
       return $icon;
 
@@ -1150,5 +1131,35 @@ if(!String.prototype.capitalize) {
     $div.remove();
 
     return height;
+  };
+
+  $.fn.bindMobileEvents = function() {
+    $(this).on('touchstart touchmove touchend touchcancel', function () {
+      var touches = event.changedTouches,
+          first = touches[0],
+          type = "";
+
+      switch (event.type) {
+        case "touchstart":type = "mousedown"; break;
+        case "touchmove":
+          type = "mousemove";
+
+          // to prevent screen from scrolling
+          event.preventDefault();
+          break;
+        case "touchend": type = "mouseup"; break;
+        default: return;
+      }
+
+      var simulatedEvent = document.createEvent("MouseEvent"); 
+
+      simulatedEvent.initMouseEvent(
+        type, true, true, window, 1, 
+        first.screenX, first.screenY, first.clientX, first.clientY, 
+        false, false, false, false, 0/*left*/, null
+      );
+
+      first.target.dispatchEvent(simulatedEvent);
+    });
   };
 })(jQuery);
