@@ -118,6 +118,8 @@
     setTheme: function (theme) {
       //just for menus
 
+      theme = 'test';
+
       //this.$paint.attr('class', this.$paint.attr('class').replace(/wPaint-theme-.+\s|wPaint-theme-.+$/, ''));
       //this.$paint.addClass('wPaint-theme-' + theme);
     },

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Websanova :: wPaint</title>
+
+  <!-- filestart -->
+  <link rel="icon" type="image/vnd.microsoft.icon"  href="./demo/img/favicon.ico" />
+  <link rel="Stylesheet" type="text/css" href="./demo/demo.css" />
+  <!-- fileend -->
+</head>
+<body>
+  <!-- headstart -->
+  <header>
+    <a id="header-logo" href="http://websanova.com"></a>
+
+    <div id="header-links">
+      <a href="http://websanova.com">Blog</a>
+      <a href="http://websanova.com/plugins">Plugins</a>
+      <a href="http://websanova.com/extensions">Extensions</a>
+      <a href="http://websanova.com/services">Services</a>
+    </div>
+  </header>
+  <!-- headend -->
+
+  <div id="content">
+    <h1 id="plugin-name">wPaint.js</h1>
+    
+    <!-- jQuery -->
+    <script type="text/javascript" src="./lib/jquery.1.10.2.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script type="text/javascript" src="./lib/jquery.ui.core.1.10.3.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.widget.1.10.3.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.mouse.1.10.3.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery.ui.draggable.1.10.3.min.js"></script>
+    
+    <!-- wColorPicker -->
+    <link rel="Stylesheet" type="text/css" href="./lib/wColorPicker.min.css" />
+    <script type="text/javascript" src="./lib/wColorPicker.min.js"></script>
+
+    <!-- wPaint -->
+    <link rel="Stylesheet" type="text/css" href="./src/wPaint.css" />
+    <script type="text/javascript" src="./src/wPaint-utils.js"></script>
+    <script type="text/javascript" src="./src/wPaint.js"></script>
+
+    <!-- wPaint main -->
+    <script type="text/javascript" src="./plugins/main/src/fillArea-min.js"></script>
+    <script type="text/javascript" src="./plugins/main/src/wPaint-menu-main.js"></script>
+
+    <!-- wPaint text -->
+    <script type="text/javascript" src="./plugins/text/src/wPaint-menu-text.js"></script>
+
+    <!-- wPaint shapes -->
+    <script type="text/javascript" src="./plugins/shapes/src/shapes-min.js"></script>
+    <script type="text/javascript" src="./plugins/shapes/src/wPaint-menu-main-shapes.js"></script>
+
+    <!-- wPaint file -->
+    <script type="text/javascript" src="./plugins/file/src/wPaint-menu-main-file.js"></script>
+
+
+
+    <div class="content-box">
+      <div id="wPaint-demo1"></div>
+      <input type="button" value="save" onclick="save();"/>
+      <div id="console"></div>
+
+      <style>
+        #wPaint-demo1 {
+          position: relative;
+          width: 500px;
+          height: 200px;
+          background-color: #7a7a7a;
+          border: solid #CACACA 1px;
+        }
+      </style>
+
+      <script type="text/javascript">
+        $(document).ready(function(){
+          $('#wPaint-demo1').wPaint();
+          $('#wPaint-demo1').wPaint('image', '/img/demo/small-test.png');
+        });
+
+        function save() {
+          $('body').append($('<img/>').attr('src', $('#wPaint-demo1').wPaint('image')));
+        }
+      </script>
+
+      <!--
+        -since wPaint contains multiple components the functions will need to be called when dom is ready, there is an option for asyncLoad true, however in this case you may experience strange things if the files are loaded out of order.  In this case make sure your files are ALL in the same file.  If you have a concat tool this would be a good place to do it if you absolutely want to load before dom ready.
+
+        -set background color/image on the fly (repeat image)
+        -resize image, ratio, etc...(check github not on this ratio thing)
+
+        -all icons in one file (get guys icons from github)
+        -each menu should have separate icons file (this will allow for adding menus) - menu name must be same as file name - this is how they will sync
+        -also make some new icons
+        -coordinate display in menu somewhere (or canvas) - coordinate,size,color
+
+        -paid professional version could be with separate pieces for images - more like photoshop
+
+        -setBg func - use rgbHex func already there from ColorPicker - if color - use it, otherwise try to set image path
+
+        -test for mobile heavily
+
+        The reason I wanted to fully revamp this plugin is becasue I was getting many requests for additions and upates.  This required being able to develop faster.  As I have been working on jQuery plugin for the last couple years I have picked up a lot of new techniques (find in my new boilerplate) that address a lot of these issues.  this should make it easier for anyone to add, update and extend any of my plugins using the new boilerplate.  I have also decided to cover the details of this workflow and Plugin development in a 40 page guide which you can find (here)...
+
+        -check if holder has relative/absolute - if not default to relative
+
+        -updating existing menu / adding new menu
+
+        -if defaults are merged and overwritten it's okay, will just use the latest (you don't need to add it, but it's a good idea to add it for safety and not rely on other extensions/plugins)
+
+        -new feature - an intelligent menu handler
+        -first menu create becomes main - make sure you load your files accordingly.  All others snap to that menu as the main
+
+        -icons setup
+          img
+          icons
+            (key is name - and tied to events for click etc like drawCircleUp)
+            (if array of icons they are stacked)
+            (order of icons will be the order they appear in)
+            title (optional and does not be set, just the title tooltip)
+            useRange (to set the actual css value to the range)
+            type
+              icon
+              colorPicker
+              select
+              menuToggle (to toggle another menu)
+              iconToggle (to toggle states true/false)
+            clickable (if icon will execute as a click changing active state - for instance undo/redo should not change the active icon, note this will NOT prevent the callbacks from running)
+            after (specicy icon you want the icon to appear after (default is object order))
+            index (of icon in image file, starting at 0 for first icon from left)
+            range (of values for select)
+            value (start value for select or colorPicker or name of menu for menuToggle)
+            callback (what happens when this button is clicked)
+            hover (true/false can provide hover image that will index to +1 by default - default value is false and does not have to be set)
+              (for multiple states where they may be an active, hover, disabled - always make the hover state +1 and other states +2, +3, etc)
+
+          (note that that e event object will be passed into the callback if you need it)
+
+        -adding icons to existing menu
+        -just add to items object, use after if you want it to appear after specific icon otherwise it will just append to end
+        -menu name must be same as icon name text: {} this.menu.text
+
+        -do not name any menus 'primary' or 'main'
+
+        -more efficient bucket tool
+
+        -dropper added to color picker - check for icon there
+
+        -menus handle is toggable, meaning you can remove it using ....
+
+        -cursor images now
+        -dropper tool is in color picker and can drop on any colors
+
+        -custom select menus that look much nicer and don't have weird alignment positioning problems
+
+        -adding cursors
+          -setup file, setup wPaint.cursors by name, if not set will go to default.
+          -some customization for eraser - we can also add some extra level of customization to any method by overloading it, in this case we do this for the eraser to get the different sizes.
+          -notice there is a strange issue with chrome browsers and cursor position.  There are two ways around it.  Always set your cursors 1 pixel larger of transparent space and adjust it correctly that way, or make the dimensions 11.99 if it is 12
+
+        -set image globall and locally
+
+        -to customize menu order - i would recommend manually copying over the items to a new array, and then overwriting the menus item array
+        -you can view the items just by echoing the menu.main.items object and you will see a full list there, so after including all your files do this
+        -from there you can just rebuild a new items object for that menu and overwrite it, or move things around as you wish
+
+        -stacked icons - this is easy all you need to do is set the "group" param to the group you want it to be a part of
+        -ordering will be based on the order the object is in, so change order accoringly.  the first icon in the group will be the starting default, if you want to change it order them in a different order and set that as the default mode
+
+        -dblclick or mousedown with short delay opens up menu group
+
+        -allow multiple themes theme: 'classic large' - parse based on spaces
+
+        -both image and bg can be either color or image
+
+        autoScaleImg and autoCenterImg properties for adding images default is true and true
+
+        -async loading - when setting up your own plugins
+
+        -extending types menu, paint(default)
+
+        http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/ (comment on article when wPaint is live - i've wrapped the plugin into canvas see here - also see it in action in the wPaint plugin)
+        http://js-bits.blogspot.com/2010/07/canvas-rounded-corner-rectangles.html
+        http://www.williammalone.com/articles/html5-canvas-example/
+
+        - _displayStatus and modals to be used internally if necessary
+
+      -->
+
+
+      <!--div id="wPaint" style="position:relative; width:500px; height:300px; background:#CACACA; border:solid black 1px;"></div>
+      <div id="image-data">
+        img data: <input id="canvasImageData" type="text" />
+        down: <input id="canvasDown" type="text" />
+        move: <input id="canvasMove" type="text" />
+        up: <input id="canvasUp" type="text" />
+      </div>
+
+      <div id="image-tests">
+        <a href="javascript:loadImage_base64();">load img (base64)</a> | 
+        <a href="javascript:loadImage_png();">load img (png)</a> | 
+        <a href="javascript:loadImage_jpg();">load img (jpg)</a> | 
+        <a href="javascript:saveImage();">save img</a> | 
+        <a href="javascript:clearCanvas();">clear canvas</a>
+      </div>
+
+      <input type="text" id="email" placeholder="Enter email"/>
+      <input type="button" id="email_button" value="Email Image" onclick="email_image()"/>
+      <input type="button" value="Upload Image" onclick="upload_image();"/>
+      
+      <img id="canvasImage" src=""/-->
+    </div>
+  </div>
+
+  <!-- footstart -->
+  <footer>
+    <div id="footer-icons">
+      <!--a id="youtube-icon" href="http://websanova.com/youtube" target="_blank"></a-->
+      <a id="stumbleupon-icon" href="http://websanova.com/stumbleupon" target="_blank"></a>
+      <a id="linkedin-icon" href="http://websanova.com/linkedin" target="_blank"></a>
+      <a id="facebook-icon" href="http://websanova.com/facebook" target="_blank"></a>
+      <a id="googleplus-icon" href="http://websanova.com/googleplus" target="_blank"></a>
+      <a id="twitter-icon" href="http://websanova.com/twitter" target="_blank"></a>
+      <a id="github-icon" href="http://websanova.com/github" target="_blank"></a>
+      <a id="rss-icon" href="http://websanova.com/feed" target="_blank"></a>
+    </div>
+  </footer>
+  <!-- footend -->
+</body>
+</html>

@@ -19,6 +19,7 @@
     "grunt-contrib-uglify": "",
     "grunt-contrib-jshint": "",
     "grunt-contrib-stylus": "",
+    "grunt-contrib-concat": "",
     "grunt-contrib-watch": ""
   }
 }

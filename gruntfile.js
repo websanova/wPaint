@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         }
       },
       files: {
-        src: ['./plugins/**/*.js', './src/*.js']
+        src: ['./plugins/**/src/wPaint-*.js', './src/*.js']
       }
     },
     uglify: {
@@ -40,18 +40,30 @@ module.exports = function(grunt) {
       },
       my_target: {
         files: {
-          './wPaint.min.js': ['./src/wPaint.js']
-        }
+          './wPaint-min.js': ['./src/wPaint.js', './src/wPaint-utils.js'],
+          './plugins/main/wPaint-menu-main-min.js': ['./plugins/main/src/wPaint-menu-main.js', './plugins/main/src/fillArea-min.js'],
+          './plugins/text/wPaint-menu-text-min.js': ['./plugins/text/src/wPaint-menu-text.js'],
+          './plugins/shapes/wPaint-menu-main-shapes-min.js': ['./plugins/shapes/src/wPaint-menu-main-shapes.js', './plugins/shapes/src/shapes-min.js'],
+          './plugins/file/wPaint-menu-main-file-min.js': ['./plugins/file/src/wPaint-menu-main-file.js']
+       }
       }
     },
     stylus: {
       compile: {
         options: {
-          import: ['nib', '../assets/mixins'],
+          import: ['nib', '../lib/mixins'],
         },
         files: {
-          './wPaint.min.css': './src/wPaint.css'
+          './wPaint-min.css': './src/wPaint.css'
         }
+      }
+    },
+    concat: {
+      basic_and_extras: {
+        files: {
+          'wPaint-min.js': ['./lib/wColorPicker.min.js', './wPaint-min.js'],
+          'wPaint-min.css': ['./lib/wColorPicker.min.css', './wPaint-min.css'],
+        },
       }
     },
     watch: {
@@ -64,6 +76,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
-  grunt.registerTask('default', [ 'jshint' ]);
+  grunt.registerTask('default', ['jshint', 'stylus', 'uglify']);
 };
