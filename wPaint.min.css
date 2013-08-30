@@ -4,7 +4,7 @@
 .wPaint-menu-handle{display:inline-block;*display:inline;zoom:1}
 .wPaint-menu-icon{position:relative;vertical-align:top;cursor:pointer}
 .wPaint-menu-icon-img{position:relative;display:inline-block;*display:inline;zoom:1;background-repeat:no-repeat}
-._wPaint_textInput{margin:0;padding:0;outline-width:0;word-wrap:break-word;overflow:hidden}
+.wPaint-textInput{margin:0;padding:0;outline-width:0;word-wrap:break-word;overflow:hidden}
 .wPaint-menu-select-holder{position:absolute;left:1px;z-index:10;border:solid #cacaca 1px;-webkit-border-radius:5px;border-radius:5px;border-top-left-radius:0;-webkit-box-shadow:1px 1px 2px #666;box-shadow:1px 1px 2px #666;overflow:hidden}
 .wPaint-menu-select{position:relative;line-height:10px;font-size:10px;font-family:verdana;text-align:center;color:#494949;max-height:136px;overflow-y:scroll;z-index:100}
 .wPaint-menu-select-option{max-width:50px;padding:4px 7px;border-top:solid #cacaca 1px;cursor:pointer;background-color:#f0f0f0;-webkit-box-shadow:inset 2px 2px 3px #fff;box-shadow:inset 2px 2px 3px #fff}
@@ -21,7 +21,7 @@
 .wPaint-menu-icon.disabled{cursor:default}
 .wPaint-menu-icon.disabled .wPaint-menu-icon-img{opacity:.3;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";filter:alpha(opacity=30)}
 .wPaint-menu-icon.hover,.wPaint-menu-icon.active{border-color:#9cf;background-color:#acf}
-._wPaint_textInput{border:dotted #00f 1px;background:none}
+.wPaint-textInput{border:dotted #00f 1px;background:none}
 .wPaint-menu-alignment-horizontal.wPaint-menu-nohandle .wPaint-menu-holder{padding-left:4px}
 .wPaint-menu-alignment-horizontal .wPaint-menu-icon{display:inline-block;*display:inline;zoom:1;margin:4px 5px 4px 0}
 .wPaint-menu-alignment-horizontal .wPaint-menu-handle{width:30px;height:39px;margin-right:5px;border-right:solid #dadada 1px;border-top-left-radius:7px;border-bottom-left-radius:7px}

@@ -29,7 +29,7 @@
 	background-repeat: no-repeat;
 }
 /*** text input ***/
-._wPaint_textInput{
+.wPaint-textInput{
 	margin: 0px;
 	padding: 0px;
 	outline-width: 0;
@@ -140,7 +140,7 @@
 	border-color: #99ccff;
 	background-color: #aaccff;
 }
-._wPaint_textInput{
+.wPaint-textInput{
 	border: dotted #0000FF 1px;
 	background: none;
 }

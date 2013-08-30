@@ -61,7 +61,7 @@
   $.fn.wPaint.extend({
     generate: function () {
       this.$textCalc = $('<div></div>').hide();
-      this.$textInput = $('<textarea class="_wPaint_textInput" spellcheck="false"></textarea>')
+      this.$textInput = $('<textarea class="wPaint-textInput" spellcheck="false"></textarea>')
       .on('mousedown', this._stopPropagation) // make sure clicking on the textInput doesn't trigger another textInput
       .css({position: 'absolute'})
       .hide();
