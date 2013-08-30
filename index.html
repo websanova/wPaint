@@ -7,7 +7,6 @@
   <!-- filestart -->
   <link rel="icon" type="image/vnd.microsoft.icon"  href="./demo/img/favicon.ico" />
   <link rel="Stylesheet" type="text/css" href="./demo/demo.css" />
-  <script type="text/javascript" src="./lib/jquery.1.10.2.min.js"></script>
   <!-- fileend -->
 </head>
 <body>
@@ -27,6 +26,9 @@
   <div id="content">
     <h1 id="plugin-name">wPaint.js</h1>
     
+    <!-- jQuery -->
+    <script type="text/javascript" src="./lib/jquery.1.10.2.min.js"></script>
+
     <!-- jQuery UI -->
     <script type="text/javascript" src="./lib/jquery.ui.core.1.10.3.min.js"></script>
     <script type="text/javascript" src="./lib/jquery.ui.widget.1.10.3.min.js"></script>
@@ -42,22 +44,18 @@
     <link rel="Stylesheet" type="text/css" href="./src/wPaint.css" />
     <script type="text/javascript" src="./src/wPaint.js"></script>
 
-    <!-- wPaint main menu -->
+    <!-- wPaint main -->
     <script type="text/javascript" src="./plugins/main/fillArea.js"></script>
     <script type="text/javascript" src="./plugins/main/wPaint-menu-main.js"></script>
 
-    <!-- wPaint text menu -->
+    <!-- wPaint text -->
     <script type="text/javascript" src="./plugins/text/wPaint-menu-text.js"></script>
 
-    <!-- wPaint shapes menu -->
-    <script type="text/javascript" src="./plugins/shapes/diamond.js"></script>
-    <script type="text/javascript" src="./plugins/shapes/ellipse.js"></script>
-    <script type="text/javascript" src="./plugins/shapes/hexagon.js"></script>
-    <script type="text/javascript" src="./plugins/shapes/pentagon.js"></script>
-    <script type="text/javascript" src="./plugins/shapes/roundedRect.js"></script>
+    <!-- wPaint shapes -->
+    <script type="text/javascript" src="./plugins/shapes/shapes.js"></script>
     <script type="text/javascript" src="./plugins/shapes/wPaint-menu-main-shapes.js"></script>
 
-    <!-- wPaint file menu -->
+    <!-- wPaint file -->
     <script type="text/javascript" src="./plugins/file/wPaint-menu-main-file.js"></script>
 
 
@@ -123,6 +121,7 @@
             (if array of icons they are stacked)
             (order of icons will be the order they appear in)
             title (optional and does not be set, just the title tooltip)
+            useRange (to set the actual css value to the range)
             type
               icon
               colorPicker

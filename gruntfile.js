@@ -3,6 +3,9 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
       options: {
+        bitwise: true,
+        camelcase: true,
+        indent: 2,
         curly: true,
         eqeqeq: true,
         immed: true,
@@ -11,8 +14,11 @@ module.exports = function(grunt) {
         noarg: true,
         sub: true,
         undef: true,
+        unused: true,
         boss: true,
         eqnull: true,
+        white: true,
+        quotmark: 'single',
         globals: {
           'window': true,
           'jQuery': true,
@@ -20,11 +26,12 @@ module.exports = function(grunt) {
           'Image': true,
           'setTimeout': true,
           'clearTimeout': true,
-          'event': true
+          'event': true,
+          'CanvasRenderingContext2D': true
         }
       },
       files: {
-        src: ['./src/wPaint.js']
+        src: ['./plugins/**/*.js', './src/*.js']
       }
     },
     uglify: {

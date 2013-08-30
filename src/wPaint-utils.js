@@ -1,19 +1,19 @@
-!(function() {
-  if(!String.prototype.capitalize) {
-    String.prototype.capitalize = function() {
-      return this.slice(0,1).toUpperCase() + this.slice(1);
+(function () {
+  if (!String.prototype.capitalize) {
+    String.prototype.capitalize = function () {
+      return this.slice(0, 1).toUpperCase() + this.slice(1);
     };
-  };
+  }
 })();
 
-!(function($) {
-  $.fn.realWidth = function(type, margin) {
+(function ($) {
+  $.fn.realWidth = function (type, margin) {
     var width = null, $div = null, method = null;
 
     type = type === 'inner' || type === 'outer' ? type : '';
     method = type === '' ? 'width' : type + 'Width';
     margin = margin === true ? true : false;
-    $div = $(this).clone().css({position:'absolute', left:-10000}).appendTo('body');
+    $div = $(this).clone().css({position: 'absolute', left: -10000}).appendTo('body');
     width = margin ? $div[method](margin) : $div[method]();
 
     $div.remove();
@@ -21,13 +21,13 @@
     return width;
   };
 
-  $.fn.realHeight = function(type, margin) {
+  $.fn.realHeight = function (type, margin) {
     var height = null, $div = null, method = null;
 
     type = type === 'inner' || type === 'outer' ? type : '';
     method = type === '' ? 'height' : type + 'Height';
     margin = margin === true ? true : false;
-    $div = $(this).clone().css({position:'absolute', left:-10000}).appendTo('body');
+    $div = $(this).clone().css({position: 'absolute', left: -10000}).appendTo('body');
     height = margin ? $div[method](margin) : $div[method]();
 
     $div.remove();
@@ -35,25 +35,28 @@
     return height;
   };
 
-  $.fn.bindMobileEvents = function() {
+  $.fn.bindMobileEvents = function () {
     $(this).on('touchstart touchmove touchend touchcancel', function () {
       var touches = event.changedTouches,
           first = touches[0],
-          type = "";
+          type = '';
 
       switch (event.type) {
-        case "touchstart":type = "mousedown"; break;
-        case "touchmove":
-          type = "mousemove";
-
-          // to prevent screen from scrolling
-          event.preventDefault();
-          break;
-        case "touchend": type = "mouseup"; break;
-        default: return;
+      case 'touchstart':
+        type = 'mousedown';
+        break;
+      case 'touchmove':
+        type = 'mousemove';
+        event.preventDefault();
+        break;
+      case 'touchend':
+        type = 'mouseup';
+        break;
+      default:
+        return;
       }
 
-      var simulatedEvent = document.createEvent("MouseEvent"); 
+      var simulatedEvent = document.createEvent('MouseEvent'); 
 
       simulatedEvent.initMouseEvent(
         type, true, true, window, 1, 
