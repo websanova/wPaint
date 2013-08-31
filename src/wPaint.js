@@ -110,6 +110,9 @@
         if (this[setFuncName]) { this[setFuncName](this.options[index]); }
       }
 
+      // fix menus
+      this._fixMenus();
+
       // initialize active menu button
       this.menus.primary._getIcon(this.options.mode).trigger('click');      
     },
@@ -284,6 +287,31 @@
       return new Menu(this, name, options);
     },
 
+    _fixMenus: function () {
+      var _this = this,
+          $selectHolder = null;
+
+      function selectEach(i, el) {
+        var $el = $(el),
+            $select = $el.clone();
+
+        $select.appendTo(_this.$el);
+
+        if ($select.outerHeight() === $select.get(0).scrollHeight) {
+          $el.css({overflowY: 'auto'});
+        }
+
+        $select.remove();
+      }
+
+      // TODO: would be nice to do this better way
+      // for some reason when setting overflowY:auto with dynamic content makes the width act up
+      for (var key in this.menus.all) {
+        $selectHolder = _this.menus.all[key].$menu.find('.wPaint-menu-select-holder');
+        if ($selectHolder.length) { $selectHolder.children().each(selectEach); }
+      }
+    },
+
     _closeSelectBoxes: function (item) {
       var $selectBoxes = null;
 
@@ -435,6 +463,8 @@
   
   Menu.prototype = {
     generate: function () {
+      var tempLeft = null;
+
       this.$menu = $('<div class="wPaint-menu"></div>');
       this.$menuHolder = $('<div class="wPaint-menu-holder wPaint-menu-name-' + this.name + '"></div>');
       
@@ -460,7 +490,12 @@
       
       // append menu
       this.wPaint.$el.append(this.$menu);
-      this._fixMenu();
+
+      // fix menu width
+      tempLeft = this.$menu.css('left');
+      this.$menu.css('left', -10000);
+      this.$menu.width(this.$menu.width());
+      this.$menu.css('left', tempLeft);
 
       // set proper offsets based on alignment
       if (this.type === 'secondary') {
@@ -496,36 +531,6 @@
           (itemAppend)(menu.items[i]);
         }
       }
-    },
-
-    _fixMenu: function () {
-      var _this = this,
-          $selectHolder = null,
-          tempLeft = null;
-
-      function selectEach(i, el) {
-        var $el = $(el),
-            $select = $el.clone();
-
-        $select.appendTo(_this.$el);
-
-        if ($select.outerHeight() === $select.get(0).scrollHeight) {
-          $el.css({overflowY: 'auto'});
-        }
-
-        $select.remove();
-      }
-
-      // TODO: would be nice to do this better way
-      // for some reason when setting overflowY:auto with dynamic content makes the width act up
-      $selectHolder = this.$menu.find('.wPaint-menu-select-holder');
-      if ($selectHolder.length) { $selectHolder.children().each(selectEach); }
-
-      // fix menu width
-      tempLeft = this.$menu.css('left');
-      this.$menu.css('left', -10000);
-      this.$menu.width(this.$menu.width());
-      this.$menu.css('left', tempLeft);
     },
 
     _appendItem: function (item) {
