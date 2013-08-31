@@ -1008,8 +1008,6 @@
   $.support.canvas = (document.createElement('canvas')).getContext;
 
   $.fn.wPaint = function (options, value) {
-    options = $.extend({}, $.fn.wPaint.defaults, options);
-
     function elOptionsEach(i, el) {
       var wPaint = $(el).data('wPaint'),
           func = null;
@@ -1066,6 +1064,9 @@
       else if (values.length > 0) { return values; }
       else { return elements; }
     }
+
+    // setup options here after get/set calls
+    options = $.extend({}, $.fn.wPaint.defaults, options);
 
     // return elements
     return this.each(elCreateEach);

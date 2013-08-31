@@ -64,8 +64,6 @@
 
     <div class="content-box">
       <div id="wPaint-demo1"></div>
-      <input type="button" value="save" onclick="save();"/>
-      <div id="console"></div>
 
       <style>
         #wPaint-demo1 {
@@ -78,14 +76,66 @@
       </style>
 
       <script type="text/javascript">
-        //$(document).ready(function(){
-          $('#wPaint-demo1').wPaint();
-          $('#wPaint-demo1').wPaint('image', '/img/demo/small-test.png');
-        //});
+        var images = [
+          '/test/uploads/wPaint-1.png',
+          '/test/uploads/wPaint-2.png',
+          '/test/uploads/wPaint-3.png',
+          '/test/uploads/wPaint-4.png',
+          '/test/uploads/wPaint-5.png',
+          '/test/uploads/wPaint-6.png'
+        ];
 
-        function save() {
-          $('body').append($('<img/>').attr('src', $('#wPaint-demo1').wPaint('image')));
+        function saveImg(image) {
+          var _this = this;
+
+          $.ajax({
+            type: 'POST',
+            url: '/test/upload.php',
+            data: {image: image},
+            success: function (resp) {
+
+              // internal function for displaying status messages in the canvas
+              _this._displayStatus('Image saved successfully');
+
+              // doesn't have to be json, can be anything
+              // returned from server after upload as long
+              // as it contains the path to the image url
+              // or a base64 encoded png, either will work
+              resp = $.parseJSON(resp);
+
+              // update images array / object or whatever
+              // is being used to keep track of the images
+              // can store path or base64 here (but path is better since it's much smaller)
+              images.push(resp.img);
+
+              // do something with the image
+              $('body').append($('<img/>').attr('src', image));
+            }
+          });
         }
+
+        function loadImgBg () {
+
+          // internal function for displaying background images modal
+          // where images is an array of images (base64 or url path)
+          // NOTE: that if you can't see the bg image changing it's probably
+          // becasue the foregroud image is not transparent.
+          this._showFileModal('bg', images);
+        }
+
+        function loadImgFg () {
+
+          // internal function for displaying foreground images modal
+          // where images is an array of images (base64 or url path)
+          this._showFileModal('fg', images);
+        }
+
+        // init wPaint
+        $('#wPaint-demo1').wPaint({
+          saveImg: saveImg,
+          loadImgBg: loadImgBg,
+          loadImgFg: loadImgFg
+        });
       </script>
 
       <!--
