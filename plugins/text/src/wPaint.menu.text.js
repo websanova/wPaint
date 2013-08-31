@@ -15,12 +15,12 @@
         index: 1,
         callback: function (toggle) { this.setFontItalic(toggle); }
       },
-      underline: {
+      /*underline: {
         icon: 'toggle',
         title: 'Undelrine',
         index: 2,
         callback: function (toggle) { this.setFontUnderline(toggle); }
-      },
+      },*/
       fontSize: {
         title: 'Font Size',
         icon: 'select',
