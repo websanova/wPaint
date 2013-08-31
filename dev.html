@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width" />
+  
   <title>Websanova :: wPaint</title>
 
   <!-- filestart -->
@@ -76,10 +78,10 @@
       </style>
 
       <script type="text/javascript">
-        $(document).ready(function(){
+        //$(document).ready(function(){
           $('#wPaint-demo1').wPaint();
           $('#wPaint-demo1').wPaint('image', '/img/demo/small-test.png');
-        });
+        //});
 
         function save() {
           $('body').append($('<img/>').attr('src', $('#wPaint-demo1').wPaint('image')));
@@ -90,7 +92,6 @@
         -since wPaint contains multiple components the functions will need to be called when dom is ready, there is an option for asyncLoad true, however in this case you may experience strange things if the files are loaded out of order.  In this case make sure your files are ALL in the same file.  If you have a concat tool this would be a good place to do it if you absolutely want to load before dom ready.
 
         -set background color/image on the fly (repeat image)
-        -resize image, ratio, etc...(check github not on this ratio thing)
 
         -all icons in one file (get guys icons from github)
         -each menu should have separate icons file (this will allow for adding menus) - menu name must be same as file name - this is how they will sync

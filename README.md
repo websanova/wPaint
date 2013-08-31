@@ -2,8 +2,8 @@
 
 A jQuery paint plugin for a simple drawing surface that you can easily pop into your pages, similar to the basic windows paint program.
 
-* [View the wHumanMsg demo](http://whumanmsg.websanova.com)
-* [Download the lastest version of wHumanMsg](https://github.com/websanova/wHumanMsg/tags)
+* [View the wPaint demo](http://wpaint.websanova.com)
+* [Download the lastest version of wPaint](https://github.com/websanova/wPaint/tags)
 
 
 ## Related Plugins

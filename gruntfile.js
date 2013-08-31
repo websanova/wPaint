@@ -67,8 +67,15 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['./src/wPaint.js', './src/wPaint.css'],
-      tasks: ['stylus', 'jshint', 'uglify', 'concat']
+      files: [
+        './src/wPaint.css',
+        './src/wPaint.js',
+        './plugins/file/src/wPaint.menu.main.js',
+        './plugins/file/src/wPaint.menu.text.js',
+        './plugins/file/src/wPaint.menu.main.shapes.js',
+        './plugins/file/src/wPaint.menu.main.file.js'
+      ],
+      tasks: ['uglify']
     }
   });
 

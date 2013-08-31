@@ -92,6 +92,10 @@
       .on('mousemove', documentMousemove)
       .on('mousedown', $.proxy(this._closeSelectBoxes, this))
       .on('mouseup', documentMouseup);
+
+      // we will need to preset theme to get proper dimensions
+      // when creating menus which will be appended after this
+      this.setTheme(this.options.theme);
     },
 
     _init: function () {
@@ -106,8 +110,6 @@
         if (this[setFuncName]) { this[setFuncName](this.options[index]); }
       }
 
-      this._fixMenus();
-
       // initialize active menu button
       this.menus.primary._getIcon(this.options.mode).trigger('click');      
     },
@@ -116,12 +118,15 @@
      * setters
      ************************************/
     setTheme: function (theme) {
-      //just for menus
+      theme = theme.split(' ');
 
-      theme = 'test';
-
-      //this.$paint.attr('class', this.$paint.attr('class').replace(/wPaint-theme-.+\s|wPaint-theme-.+$/, ''));
-      //this.$paint.addClass('wPaint-theme-' + theme);
+      // remove anything beginning with "wPaint-theme-" first
+      this.$el.attr('class', (this.$el.attr('class') || '').replace(/wPaint-theme-.+\s|wPaint-theme-.+$/, ''));
+      
+      // add each theme
+      for (var i = 0, ii = theme.length; i < ii; i++) {
+        this.$el.addClass('wPaint-theme-' + theme[i]);
+      }
     },
 
     setMode: function (mode) {
@@ -277,30 +282,6 @@
       options.handle = this.options.menuHandle;
       
       return new Menu(this, name, options);
-    },
-
-    // TODO: would be nice to do this better way
-    // for some reason when setting overflowY:auto with dynamic content makes the width act up
-    _fixMenus: function () {
-      var $selectHolder = null;
-
-      function selectEach(i, el) {
-        var $el = $(el),
-            $select = $el.clone();
-
-        $select.appendTo('body');
-
-        if ($select.outerHeight() === $select.get(0).scrollHeight) {
-          $el.css({overflowY: 'auto'});
-        }
-
-        $select.remove();
-      }
-
-      for (var key in this.menus.all) {
-        $selectHolder = this.menus.all[key].$menu.find('.wPaint-menu-select-holder');
-        if ($selectHolder.length) { $selectHolder.children().each(selectEach); }
-      }
     },
 
     _closeSelectBoxes: function (item) {
@@ -472,14 +453,16 @@
         this.$menu.hide();
       }
 
+      // append menu items
       this.$menu.append(this.$menuHolder.append(this.$menuHandle));
       this.reset();
       this.setAlignment(this.options.alignment);
       
-      $('body').append(this.$menu);
-      this.$menu.width(this.$menu.width());
+      // append menu
       this.wPaint.$el.append(this.$menu);
+      this._fixMenu();
 
+      // set proper offsets based on alignment
       if (this.type === 'secondary') {
         if (this.options.alignment === 'horizontal') {
           this.dockOffset.top = this.wPaint.menus.primary.$menu.outerHeight(true);
@@ -513,6 +496,36 @@
           (itemAppend)(menu.items[i]);
         }
       }
+    },
+
+    _fixMenu: function () {
+      var _this = this,
+          $selectHolder = null,
+          tempLeft = null;
+
+      function selectEach(i, el) {
+        var $el = $(el),
+            $select = $el.clone();
+
+        $select.appendTo(_this.$el);
+
+        if ($select.outerHeight() === $select.get(0).scrollHeight) {
+          $el.css({overflowY: 'auto'});
+        }
+
+        $select.remove();
+      }
+
+      // TODO: would be nice to do this better way
+      // for some reason when setting overflowY:auto with dynamic content makes the width act up
+      $selectHolder = this.$menu.find('.wPaint-menu-select-holder');
+      if ($selectHolder.length) { $selectHolder.children().each(selectEach); }
+
+      // fix menu width
+      tempLeft = this.$menu.css('left');
+      this.$menu.css('left', -10000);
+      this.$menu.width(this.$menu.width());
+      this.$menu.css('left', tempLeft);
     },
 
     _appendItem: function (item) {
@@ -597,10 +610,10 @@
       var _this = this,
           $icon = $('<div class="wPaint-menu-icon wPaint-menu-icon-name-' + item.name + '"></div>'),
           $iconImg = $('<div class="wPaint-menu-icon-img"></div>'),
-          width = $iconImg.realWidth();
+          width = $iconImg.realWidth(null, null, this.wPaint.$el);
 
-      function mouseenter(i, el) {
-        var $el = $(el);
+      function mouseenter(e) {
+        var $el = $(e.currentTarget);
 
         $el.siblings('.hover').removeClass('hover');
         if (!$el.hasClass('disabled')) { $el.addClass('hover'); }
@@ -684,7 +697,7 @@
 
       // get the proper width here now that we have the icon
       // this is for the select box group not the main icon
-      width = $icon.children('.wPaint-menu-icon-img').realWidth();
+      width = $icon.children('.wPaint-menu-icon-img').realWidth(null, null, this.wPaint.$el);
       css.backgroundPosition = (-width * item.index) + 'px center';
 
       // create selectHolder if it doesn't exist
@@ -844,11 +857,11 @@
 
       // of hozizontal we'll pop below the icon
       if (this.options.alignment === 'horizontal') {
-        $selectHolder.css({left: 0, top: $icon.children('.wPaint-menu-icon-img').realHeight('outer', true)});
+        $selectHolder.css({left: 0, top: $icon.children('.wPaint-menu-icon-img').realHeight('outer', true, this.wPaint.$el)});
       }
       // vertical we'll pop to the right
       else {
-        $selectHolder.css({left: $icon.children('.wPaint-menu-icon-img').realWidth('outer', true), top: 0});
+        $selectHolder.css({left: $icon.children('.wPaint-menu-icon-img').realWidth('outer', true, this.wPaint.$el), top: 0});
       }
 
       $icon
@@ -1090,7 +1103,7 @@
   $.fn.wPaint.cursors = {};
 
   $.fn.wPaint.defaults = {
-    theme:       'classic',     // set theme
+    theme:       'standard classic',     // set theme
     mode:        'pencil',   // set mode
     width: null, // if not set will auto detect
     height: null, // if not set will auto detect
