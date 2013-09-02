@@ -283,7 +283,7 @@
      ************************************/
     _createMenu: function (name, options) {
       options = options || {};
-      options.alignment = this.options.menuAlignment;
+      options.alignment = this.options.menuOrientation;
       options.handle = this.options.menuHandle;
       
       return new Menu(this, name, options);
@@ -370,6 +370,8 @@
 
       this.canvasTempLeftOriginal = e.pageX;
       this.canvasTempTopOriginal = e.pageY;
+
+      if (this.options.onShapeDown) { this.options.onShapeDown.apply(this, [e]); }
     },
     
     _drawShapeMove: function (e, factor) {
@@ -402,11 +404,15 @@
       this.ctxTemp.fillStyle = this.options.fillStyle;
       this.ctxTemp.strokeStyle = this.options.strokeStyle;
       this.ctxTemp.lineWidth = this.options.lineWidth * factor;
+
+      if (this.options.onShapeDown) { this.options.onShapeMove.apply(this, [e]); }
     },
     
-    _drawShapeUp: function () {
+    _drawShapeUp: function (e) {
       this.ctx.drawImage(this.canvasTemp, this.canvasTempLeftNew, this.canvasTempTopNew);
       this.$canvasTemp.hide();
+
+      if (this.options.onShapeDown) { this.options.onShapeUp.apply(this, [e]); }
     },
 
     /****************************************
@@ -1099,11 +1105,11 @@
       else {
         protoType[func] = funcs[func];
       }
-    };
+    }
 
     protoType = protoType === 'menu' ? Menu.prototype : Paint.prototype;
 
-    for (key in funcs) { (elEach)(index); }
+    for (key in funcs) { (elEach)(key); }
   };
 
   /************************************************************************
@@ -1111,22 +1117,20 @@
    ************************************************************************/
   $.fn.wPaint.menus = {};
 
-  $.fn.wPaint.cursors = {
-
-  };
+  $.fn.wPaint.cursors = {};
 
   $.fn.wPaint.defaults = {
-    theme:           'standard classic',     // set theme
-    mode:            'pencil',   // set mode
-    //width:           null, // if not set will auto detect
-    //height:          null, // if not set will auto detect
-    autoScaleImage:  true, // when setting image or imageBg - auto size images to size of canvas.
-    autoCenterImage: true, // if true will center image otherwise, goes left/top corner
-    menuHandle:      true,
-    menuAlignment:   'horizontal',
-    menuOffsetLeft:  5,
-    menuOffsetTop:   5
-    //dropperIcon:     'url("/img/icon-dropper.png") 0 12, default'//,
-    //bg: '#f0f0f0'
+    theme:           'standard classic', // set theme
+    autoScaleImage:  true,               // auto scale images to size of canvas (fg and bg)
+    autoCenterImage: true,               // auto center images (fg and bg, default is left/top corner)
+    menuHandle:      true,               // setting to false will means menus cannot be dragged around
+    menuOrientation: 'horizontal',       // menu alignment (horizontal,vertical)
+    menuOffsetLeft:  5,                  // left offset of primary menu
+    menuOffsetTop:   5,                  // top offset of primary menu
+    bg:              null,               // set bg on init
+    image:           null,               // set image on init
+    onShapeDown:     null,               // callback for draw down event
+    onShapeMove:     null,               // callback for draw move event
+    onShapeUp:       null                // callback for draw up event
   };
 })(jQuery);
