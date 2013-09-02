@@ -50,11 +50,11 @@
 
   // extend defaults
   $.extend($.fn.wPaint.defaults, {
-    fontSize       : '12',        // current font size for text input
-    fontFamily     : 'Arial',       // active font family for text input
-    fontBold       : false,       // text input bold enable/disable
-    fontItalic     : false,       // text input italic enable/disable
-    fontUnderline  : false       // text input italic enable/disable
+    fontSize       : '12',    // current font size for text input
+    fontFamily     : 'Arial', // active font family for text input
+    fontBold       : false,   // text input bold enable/disable
+    fontItalic     : false,   // text input italic enable/disable
+    fontUnderline  : false    // text input italic enable/disable
   });
 
   // extend functions

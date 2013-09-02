@@ -36,9 +36,9 @@
 
   // extend defaults
   $.extend($.fn.wPaint.defaults, {
-    saveImg: null,
-    loadImgFg: null,
-    loadImgBg: null
+    saveImg: null,   // callback triggerd on image save
+    loadImgFg: null, // callback triggered on image fg
+    loadImgBg: null  // callback triggerd on image bg
   });
 
   // extend functions
