@@ -1,58 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>Websanova Paint</title>
-	
-	<!-- jQuery -->
-	<script type="text/javascript" src="./inc/jquery.1.8.2.min.js"></script>
-	<script type="text/javascript" src="./inc/jquery.ui.core.min.js"></script>
-	<script type="text/javascript" src="./inc/jquery.ui.widget.min.js"></script>
-	<script type="text/javascript" src="./inc/jquery.ui.mouse.min.js"></script>
-	<script type="text/javascript" src="./inc/jquery.ui.draggable.min.js"></script>
-	
-	<!-- wColorPicker -->
-	<link rel="Stylesheet" type="text/css" href="./inc/wColorPicker.css" />
-	<script type="text/javascript" src="./inc/wColorPicker.js"></script>
-	
-	<!-- wPaint -->
-	<link rel="Stylesheet" type="text/css" href="./wPaint.css" />
-	<script type="text/javascript" src="./wPaint.js"></script>
-	
-	<style>
-		body, html{margin:0px;}
-	</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width" />
 
-	<script type="text/javascript">
-		$(window).resize(function()
-		{
-			var width = $(window).width();
-			var height = $(window).height();
+  <title>Websanova :: Paint</title>
 
-			$('#wPaint').css({
-				width: width,
-				height: height
-			});
-
-			var wp = $("#wPaint").data('_wPaint');
-
-			// if you want to maintain the image after resizing the canvas
-			//var imageData = $("#wPaint").wPaint("image"); 
-
-			$(wp.canvas).attr('width', width + 'px').attr('height', height + 'px');
-
-			//$("#wPaint").wPaint("image", imageData);
-		})
-
-		$(document).ready(function(){ $(window).resize(); });
-	</script>
+  <script type="text/javascript" src="../lib/jquery.1.10.2.min.js"></script>
 </head>
 <body>
-	<div id="wPaint" style="position:relative; width:200px; height:200px; background:#CACACA;"></div>
+  <!-- jQuery UI -->
+  <script type="text/javascript" src="../lib/jquery.ui.core.1.10.3.min.js"></script>
+  <script type="text/javascript" src="../lib/jquery.ui.widget.1.10.3.min.js"></script>
+  <script type="text/javascript" src="../lib/jquery.ui.mouse.1.10.3.min.js"></script>
+  <script type="text/javascript" src="../lib/jquery.ui.draggable.1.10.3.min.js"></script>
+  
+  <!-- wColorPicker -->
+  <link rel="Stylesheet" type="text/css" href="../lib/wColorPicker.min.css" />
+  <script type="text/javascript" src="../lib/wColorPicker.min.js"></script>
 
+  <!-- wPaint -->
+  <link rel="Stylesheet" type="text/css" href="../wPaint.min.css" />
+  <script type="text/javascript" src="../wPaint.min.js"></script>
+  <script type="text/javascript" src="../plugins/main/wPaint.menu.main.min.js"></script>
+  <script type="text/javascript" src="../plugins/text/wPaint.menu.text.min.js"></script>
+  <script type="text/javascript" src="../plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
+  <script type="text/javascript" src="../plugins/file/wPaint.menu.main.file.min.js"></script>
 
-	<script>
-		$("#wPaint").wPaint();
-	</script>
+  <div id="wPaint" style="position:relative; width:200px; height:200px; background:#CACACA;"></div>
+
+  <style>
+    body, html {
+      margin: 0px;
+    }
+  </style>
+
+  <script type="text/javascript">
+    $('#wPaint').css({
+      width: $(window).width(),
+      height: $(window).height()
+    });
+
+    $('#wPaint').wPaint();
+  </script>
 </body>
 </html>
