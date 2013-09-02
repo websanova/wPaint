@@ -121,13 +121,15 @@
      * setters
      ************************************/
     setTheme: function (theme) {
+      var i, ii;
+
       theme = theme.split(' ');
 
       // remove anything beginning with "wPaint-theme-" first
       this.$el.attr('class', (this.$el.attr('class') || '').replace(/wPaint-theme-.+\s|wPaint-theme-.+$/, ''));
       
       // add each theme
-      for (var i = 0, ii = theme.length; i < ii; i++) {
+      for (i = 0, ii = theme.length; i < ii; i++) {
         this.$el.addClass('wPaint-theme-' + theme[i]);
       }
     },
@@ -313,10 +315,10 @@
     },
 
     _closeSelectBoxes: function (item) {
-      var $selectBoxes = null;
+      var key, $selectBoxes;
 
-      for (var i in this.menus.all) {
-        $selectBoxes = this.menus.all[i].$menuHolder.children('.wPaint-menu-icon-select');
+      for (key in this.menus.all) {
+        $selectBoxes = this.menus.all[key].$menuHolder.children('.wPaint-menu-icon-select');
 
         // hide any open select menus excluding the current menu
         // this is to avoid the double toggle since there are some
@@ -511,24 +513,25 @@
     // create / reset menu - will add new entries in the array
     reset: function () {
       var _this = this,
-          menu = $.fn.wPaint.menus[this.name];
+          menu = $.fn.wPaint.menus[this.name],
+          key;
 
       // self invoking function
       function itemAppend(item) { _this._appendItem(item); }
 
-      for (var i in menu.items) {
+      for (key in menu.items) {
 
         // only add unique (new) items (icons)
-        if (!this.$menuHolder.children('.wPaint-menu-icon-name-' + i).length) {
+        if (!this.$menuHolder.children('.wPaint-menu-icon-name-' + key).length) {
           
           // add the item name, we will need this internally
-          menu.items[i].name = i;
+          menu.items[key].name = key;
 
           // use default img if img not set
-          menu.items[i].img = menu.items[i].img || menu.img;
+          menu.items[key].img = menu.items[key].img || menu.img;
 
           // make self invoking to avoid overwrites
-          (itemAppend)(menu.items[i]);
+          (itemAppend)(menu.items[key]);
         }
       }
     },
@@ -816,7 +819,7 @@
       var _this = this,
           $icon = this._createIconBase(item),
           $selectHolder = this._createSelectBox($icon),
-          $option = null;
+          i, ii, $option;
 
       function optionClick(e) {
         $icon.children('.wPaint-menu-icon-img').html($(e.currentTarget).html());
@@ -824,7 +827,7 @@
       }
 
       // add values for select
-      for (var i = 0, ii = item.range.length; i < ii; i++) {
+      for (i = 0, ii = item.range.length; i < ii; i++) {
         $option = this._createSelectOption($selectHolder, item.range[i]);
         $option.on('click', optionClick);
         if (item.useRange) { $option.css(item.name, item.range[i]); }
@@ -1081,9 +1084,9 @@
    * extend
    ************************************************************************/
   $.fn.wPaint.extend = function (funcs, protoType) {
-    protoType = protoType === 'menu' ? Menu.prototype : Paint.prototype;
-
-    var func = function (func) {
+    var key;
+    
+    function elEach(func) {
       if (protoType[func]) {
         var tmpFunc = Paint.prototype[func],
             newFunc = funcs[func];
@@ -1098,7 +1101,9 @@
       }
     };
 
-    for (var index in funcs) { (func)(index); }
+    protoType = protoType === 'menu' ? Menu.prototype : Paint.prototype;
+
+    for (key in funcs) { (elEach)(index); }
   };
 
   /************************************************************************
@@ -1106,20 +1111,22 @@
    ************************************************************************/
   $.fn.wPaint.menus = {};
 
-  $.fn.wPaint.cursors = {};
+  $.fn.wPaint.cursors = {
+
+  };
 
   $.fn.wPaint.defaults = {
-    theme:       'standard classic',     // set theme
-    mode:        'pencil',   // set mode
-    width: null, // if not set will auto detect
-    height: null, // if not set will auto detect
-    autoScaleImage: true, // when setting image or imageBg - auto size images to size of canvas.
+    theme:           'standard classic',     // set theme
+    mode:            'pencil',   // set mode
+    //width:           null, // if not set will auto detect
+    //height:          null, // if not set will auto detect
+    autoScaleImage:  true, // when setting image or imageBg - auto size images to size of canvas.
     autoCenterImage: true, // if true will center image otherwise, goes left/top corner
-    menuHandle: true,
-    menuAlignment: 'horizontal',
-    menuOffsetLeft: 5,
-    menuOffsetTop: -50,
-    dropperIcon: 'url("/img/icon-dropper.png") 0 12, default'//,
+    menuHandle:      true,
+    menuAlignment:   'horizontal',
+    menuOffsetLeft:  5,
+    menuOffsetTop:   5
+    //dropperIcon:     'url("/img/icon-dropper.png") 0 12, default'//,
     //bg: '#f0f0f0'
   };
 })(jQuery);

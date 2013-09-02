@@ -14,7 +14,10 @@ A jQuery paint plugin for a simple drawing surface that you can easily pop into 
 
 ## Settings
 
-Available options with notes, the values here are the defaults.
+Settings are available per plugin.  Meaning only when that plugin is included will those settings be available.
+
+
+### ```base```
 
 ```js
 $('#elem').wPaint({
@@ -160,4 +163,10 @@ Copyright (C) 2011-2012 Websanova http://www.websanova.com
 
 ###
 -overloading funcs - don't worry about overwrites, they will just continue to stack and duck punch
+
+
+
+### demos
+paintanova.com
+http://ricitosdeoro.zirculomarketing.com/club-ricitos-juegos-dibujando.php#
 
