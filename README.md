@@ -14,7 +14,7 @@ A jQuery paint plugin for a simple drawing surface that you can easily pop into 
 
 ## Support 
 
-If you enjoy this plugin please leave a small contribution on `[Gittip](https://gittip.com/websanova)`.  I work on these plugins completely in my free time and any contribution is greatly appreciated.
+If you enjoy this plugin please leave a small contribution on [Gittip](https://gittip.com/websanova).  I work on these plugins completely in my free time and any contribution is greatly appreciated.
 
 
 ## Settings
