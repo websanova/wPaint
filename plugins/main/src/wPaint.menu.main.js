@@ -341,6 +341,7 @@
      ****************************************/
     _drawBucketDown: function (e) {
       this.ctx.fillArea(e.pageX, e.pageY, this.options.fillStyle);
+      this._addUndo();
     }
   });
 })(jQuery);

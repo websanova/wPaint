@@ -48,17 +48,8 @@
       <script type="text/javascript" src="./plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
       <script type="text/javascript" src="./plugins/file/wPaint.menu.main.file.min.js"></script>
 
-      <div id="wPaint-demo1"></div>
-
-      <style>
-        #wPaint-demo1 {
-          position: relative;
-          width: 500px;
-          height: 200px;
-          background-color: #7a7a7a;
-          border: solid #CACACA 1px;
-        }
-      </style>
+      <div id="wPaint" style="position:relative; width:500px; height:200px; background-color:#7a7a7a; margin:60px auto;"></div>
+      <div style="position:relative; width:500px; height:200px; margin:20px auto;"><img id="wPaint-img" src=""/></div>
 
       <script type="text/javascript">
         var images = [
@@ -89,7 +80,7 @@
               images.push(resp.img);
 
               // do something with the image
-              $('body').append($('<img/>').attr('src', image));
+              $('#wPaint-img').attr('src', image);
             }
           });
         }
@@ -111,7 +102,7 @@
         }
 
         // init wPaint
-        $('#wPaint-demo1').wPaint({
+        $('#wPaint').wPaint({
           menuOffsetLeft: -35,
           menuOffsetTop: -50,
           saveImg: saveImg,
