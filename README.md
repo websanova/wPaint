@@ -12,6 +12,11 @@ A jQuery paint plugin for a simple drawing surface that you can easily pop into 
 * [wColorPicker](http://wcolorpicker.websanova.com) - Color pallette seleciton plugin.
 
 
+## Support 
+
+If you enjoy this plugin please leave a small contribution on `<a href="https://gittip.com/websanova">Gittip</a>`.  I work on these plugins completely in my free time and any contribution is greatly appreciated.
+
+
 ## Settings
 
 Settings are available per plugin.  Meaning only when that plugin is included will those settings be available.
@@ -177,11 +182,6 @@ We can also manually run an `undo` or `redo`.
 $('#wPaint').wPaint('undo');
 $('#wPaint').wPaint('redo');
 ```
-
-
-## Plugins
-
---file organization
 
 
 ## Extending
