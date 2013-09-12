@@ -165,6 +165,15 @@ $("#wPaint").wPaint({
 ```
 
 
+### resize
+
+In case you want to resize your canvas there is a `resize` utility function available.  Call this after you change the dimensions of your canvas element.  Check the `test/fullscreen.html` demo for sample code.
+
+```js
+$("#wPaint").wPaint('resize');
+```
+
+
 ### clear
 
 Clear the canvas manually.

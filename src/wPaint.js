@@ -14,6 +14,9 @@
     this.width = this.$el.width();
     this.height = this.$el.height();
 
+    this.ctxBgResize = false;
+    this.ctxResize = false;
+
     this.generate();
     this._init();
   }
@@ -117,6 +120,29 @@
       this.menus.primary._getIcon(this.options.mode).trigger('click');      
     },
 
+    resize: function () {
+      var bg = this.getBg(),
+          image = this.getImage();
+
+      this.width = this.$el.width();
+      this.height = this.$el.height();
+
+      this.canvasBg.width = this.width;
+      this.canvasBg.height = this.height;
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+
+      if (this.ctxBgResize === false) {
+        this.ctxBgResize = true;
+        this.setBg(bg, true);
+      }
+
+      if (this.ctxResize === false) {
+        this.ctxResize = true;
+        this.setImage(image, '', true);
+      }
+    },
+
     /************************************
      * setters
      ************************************/
@@ -140,36 +166,42 @@
       this.options.mode = mode;
     },
 
-    setImage: function (img, ctx) {
+    setImage: function (img, ctxType, resize) {
       if (!img) { return true; }
 
       var _this = this,
-          myImage = null;
+          myImage = null,
+          ctx = '';
 
       function loadImage() {
         var ratio = 1, xR = 0, yR = 0, x = 0, y = 0, w = myImage.width, h = myImage.height;
 
-        // get width/height
-        if (myImage.width > _this.width || myImage.height > _this.height) {
-          xR = _this.width / myImage.width;
-          yR = _this.height / myImage.height;
+        if (!resize) {
+          // get width/height
+          if (myImage.width > _this.width || myImage.height > _this.height) {
+            xR = _this.width / myImage.width;
+            yR = _this.height / myImage.height;
 
-          ratio = xR < yR ? xR : yR;
+            ratio = xR < yR ? xR : yR;
 
-          w = myImage.width * ratio;
-          h = myImage.height * ratio;
+            w = myImage.width * ratio;
+            h = myImage.height * ratio;
+          }
+
+          // get left/top (centering)
+          x = (_this.width - w) / 2;
+          y = (_this.height - h) / 2;
         }
-
-        // get left/top (centering)
-        x = (_this.width - w) / 2;
-        y = (_this.height - h) / 2;
 
         ctx.clearRect(0, 0, _this.width, _this.height);
         ctx.drawImage(myImage, x, y, w, h);
         if (!ctx) { _this._imageOnload(); }
+
+        _this[ctxType + 'Resize'] = false;
       }
       
-      ctx = ctx || this.ctx;
+      ctxType = 'ctx' + (ctxType || '').capitalize();
+      ctx = this[ctxType];
       
       if (window.rgbHex(img)) {
         ctx.clearRect(0, 0, this.width, this.height);
@@ -184,10 +216,10 @@
       }
     },
 
-    setBg: function (img) {
+    setBg: function (img, resize) {
       if (!img) { return true; }
       
-      this.setImage(img, this.ctxBg);
+      this.setImage(img, 'bg', resize);
     },
 
     setCursor: function (cursor) {
@@ -209,6 +241,10 @@
       ctxSave.drawImage(this.canvas, 0, 0);
 
       return canvasSave.toDataURL();
+    },
+
+    getBg: function () {
+      return this.canvasBg.toDataURL();
     },
 
     /************************************
