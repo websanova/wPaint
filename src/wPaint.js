@@ -223,7 +223,9 @@
     },
 
     setCursor: function (cursor) {
-      this.$el.css('cursor', $.fn.wPaint.cursors[cursor] || $.fn.wPaint.cursors['default']);
+      cursor = $.fn.wPaint.cursors[cursor] || $.fn.wPaint.cursors['default'];
+
+      this.$el.css('cursor', 'url("' + this.options.path + cursor.path + '") ' + cursor.left + ' ' + cursor.top + ', default');
     },
 
     getImage: function (withBg) {
@@ -570,7 +572,7 @@
           menu.items[key].name = key;
 
           // use default img if img not set
-          menu.items[key].img = menu.items[key].img || menu.img;
+          menu.items[key].img = _this.wPaint.options.path + (menu.items[key].img || menu.img);
 
           // make self invoking to avoid overwrites
           (itemAppend)(menu.items[key]);
@@ -1156,6 +1158,7 @@
   $.fn.wPaint.cursors = {};
 
   $.fn.wPaint.defaults = {
+    path:            '/',                // set absolute path for images and cursors
     theme:           'standard classic', // set theme
     autoScaleImage:  true,               // auto scale images to size of canvas (fg and bg)
     autoCenterImage: true,               // auto center images (fg and bg, default is left/top corner)

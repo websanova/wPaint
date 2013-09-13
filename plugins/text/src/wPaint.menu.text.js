@@ -1,7 +1,8 @@
-(function ($) {  
+(function ($) {
+
   // setup menu
   $.fn.wPaint.menus.text = {
-    img: '/plugins/text/img/icons-menu-text.png',
+    img: 'plugins/text/img/icons-menu-text.png',
     items: {
       bold: {
         icon: 'toggle',
