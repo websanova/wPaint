@@ -99,6 +99,17 @@ From here we will need to include plugin files for whatever menu icons we would 
 ```
 
 
+### path
+
+If you are putting wPaint into a path other than root (most likely you will) then you will need to set the `path` option since the image and cursor icon paths are set in the JavaScript and not in CSS.  This means we can not make them relative from the included file like we can in the CSS file but rather relative to the dispalying page.  The default path is just the root folder `/` but a path can be set for wpaint.
+
+```js
+$('#wPaint').wPaint({
+  path: '/js/lib/wPaint/'
+});
+```
+
+
 ### save / load
 
 There have been many questions regarding saving / loading images using wPaint.  Loading images CANNOT be done locally or from other domains due to browser restrictions with [cross origin](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Same_origin_policy_for_JavaScript) policies.  There are some potential workarounds for this using [CORS](https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image?redirectlocale=en-US&redirectslug=CORS_Enabled_Image) but this has not been implemented yet.
