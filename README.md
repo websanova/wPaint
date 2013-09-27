@@ -82,8 +82,23 @@ $.extend($.fn.wPaint.defaults, {
 
 ## Examples
 
-To start you will need to include the wPaint core files:
+To start, you will need to include any dependencies (the paths and versions may differ):
+```html
+<!-- jQuery -->
+<script type="text/javascript" src="./lib/jquery.1.10.2.min.js"></script>
+<!-- jQuery UI -->
+<script type="text/javascript" src="./lib/jquery.ui.core.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.widget.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.mouse.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.draggable.1.10.3.min.js"></script>
+<!-- wColorPicker -->
+<link rel="Stylesheet" type="text/css" href="./lib/wColorPicker.min.css" />
+<script type="text/javascript" src="./lib/wColorPicker.min.js"></script>
+```
 
+
+
+Then you need to include the wPaint core files:
 ```html
 <link rel="Stylesheet" type="text/css" href="./wPaint.min.css" />
 <script type="text/javascript" src="./wPaint.min.js"></script>
