@@ -443,14 +443,14 @@
       this.ctxTemp.strokeStyle = this.options.strokeStyle;
       this.ctxTemp.lineWidth = this.options.lineWidth * factor;
 
-      if (this.options.onShapeDown) { this.options.onShapeMove.apply(this, [e]); }
+      if (this.options.onShapeMove) { this.options.onShapeMove.apply(this, [e]); }
     },
     
     _drawShapeUp: function (e) {
       this.ctx.drawImage(this.canvasTemp, this.canvasTempLeftNew, this.canvasTempTopNew);
       this.$canvasTemp.hide();
 
-      if (this.options.onShapeDown) { this.options.onShapeUp.apply(this, [e]); }
+      if (this.options.onShapeUp) { this.options.onShapeUp.apply(this, [e]); }
     },
 
     /****************************************
