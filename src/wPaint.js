@@ -390,6 +390,11 @@
 
       // run callback if set
       if (this.options['draw' + canvasEvent]) { this.options['_draw' + canvasEvent].apply(this, [e]); }
+
+      // run options (user) callback if set
+      if (canvasEvent === 'Down' && this.options.onShapeDown) { this.options.onShapeDown.apply(this, [e]); }
+      else if (canvasEvent === 'Move' && this.options.onShapeMove) { this.options.onShapeMove.apply(this, [e]); }
+      else if (canvasEvent === 'Up' && this.options.onShapeUp) { this.options.onShapeUp.apply(this, [e]); }
     },
 
     _stopPropagation: function (e) {
@@ -408,8 +413,6 @@
 
       this.canvasTempLeftOriginal = e.pageX;
       this.canvasTempTopOriginal = e.pageY;
-
-      if (this.options.onShapeDown) { this.options.onShapeDown.apply(this, [e]); }
     },
     
     _drawShapeMove: function (e, factor) {
@@ -442,15 +445,11 @@
       this.ctxTemp.fillStyle = this.options.fillStyle;
       this.ctxTemp.strokeStyle = this.options.strokeStyle;
       this.ctxTemp.lineWidth = this.options.lineWidth * factor;
-
-      if (this.options.onShapeMove) { this.options.onShapeMove.apply(this, [e]); }
     },
     
-    _drawShapeUp: function (e) {
+    _drawShapeUp: function () {
       this.ctx.drawImage(this.canvasTemp, this.canvasTempLeftNew, this.canvasTempTopNew);
       this.$canvasTemp.hide();
-
-      if (this.options.onShapeUp) { this.options.onShapeUp.apply(this, [e]); }
     },
 
     /****************************************
