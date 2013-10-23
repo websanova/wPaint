@@ -1002,7 +1002,11 @@
         // the items name here will be the menu name
         var menu = _this.wPaint.menus.all[item.name];
         menu.$menu.toggle();
-        menu._setDrag();
+        if (_this.handle) {
+          menu._setDrag();
+        } else {
+          menu._setPosition();
+        }
       }
 
       $icon.on('click', iconClick);
