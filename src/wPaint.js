@@ -198,6 +198,10 @@
         if (!ctx) { _this._imageOnload(); }
 
         _this[ctxType + 'Resize'] = false;
+
+        if (ctxType !== 'ctxBg') {
+          _this._addUndo();
+        }
       }
       
       ctxType = 'ctx' + (ctxType || '').capitalize();
