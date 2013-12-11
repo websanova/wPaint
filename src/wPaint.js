@@ -139,7 +139,7 @@
 
       if (this.ctxResize === false) {
         this.ctxResize = true;
-        this.setImage(image, '', true);
+        this.setImage(image, '', true, true);
       }
     },
 
@@ -166,7 +166,7 @@
       this.options.mode = mode;
     },
 
-    setImage: function (img, ctxType, resize) {
+    setImage: function (img, ctxType, resize, notUndo) {
       if (!img) { return true; }
 
       var _this = this,
@@ -195,11 +195,12 @@
 
         ctx.clearRect(0, 0, _this.width, _this.height);
         ctx.drawImage(myImage, x, y, w, h);
-        if (!ctx) { _this._imageOnload(); }
 
         _this[ctxType + 'Resize'] = false;
 
-        if (ctxType !== 'ctxBg') {
+        // Default is to run the undo.
+        // If it's not to be run set it the flag to true.
+        if (!notUndo) {
           _this._addUndo();
         }
       }
@@ -223,7 +224,7 @@
     setBg: function (img, resize) {
       if (!img) { return true; }
       
-      this.setImage(img, 'bg', resize);
+      this.setImage(img, 'bg', resize, true);
     },
 
     setCursor: function (cursor) {
@@ -374,9 +375,9 @@
     /************************************
      * events
      ************************************/
-    _imageOnload: function () {
-      /* a blank helper function for post image load calls on canvas - can be extended by other plugins using the setImage called */
-    },
+    //_imageOnload: function () {
+    //  /* a blank helper function for post image load calls on canvas - can be extended by other plugins using the setImage called */
+    //},
 
     _callShapeFunc: function (e) {
 

@@ -199,23 +199,14 @@
     },
 
     _setUndo: function (undoCurrent) {
-
-      // we don't want to save an undo when calling undo/redo
-      this.setUndoFlag = false;
-      this.setImage(this.undoArray[undoCurrent]);
-    },
-
-    _imageOnload: function () {
-
-      // if setting image directly through api then we will need to call the addUndo
-      if (this.setUndoFlag) { this._addUndo(); }
-      this.setUndoFlag = true;
+      this.setImage(this.undoArray[undoCurrent], null, null, true);
     },
 
     /****************************************
      * clear
      ****************************************/
     clear: function () {
+
       // only run if not disabled (make sure we only run one clear at a time)
       if (!this.menus.all.main._isIconDisabled('clear')) {
         this.ctx.clearRect(0, 0, this.width, this.height);

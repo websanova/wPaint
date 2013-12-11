@@ -54,7 +54,7 @@
           // just in case to not draw on canvas
           e.stopPropagation();
           if (type === 'fg') { _this.setImage(image); }
-          else if (type === 'bg') { _this.setBg(image); }
+          else if (type === 'bg') { _this.setBg(image, null, null, true); }
         }
 
         $img.on('click', imgClick);
