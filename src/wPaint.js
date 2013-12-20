@@ -1068,68 +1068,67 @@
   $.support.canvas = (document.createElement('canvas')).getContext;
 
   $.fn.wPaint = function (options, value) {
-    function elOptionsEach(i, el) {
-      var wPaint = $(el).data('wPaint'),
-          func = null;
 
-      if (wPaint) {
-        func = (value ? 'set' : 'get') + options.charAt(0).toUpperCase() + options.substring(1).toLowerCase();
-
-        if (wPaint[options]) {
-          wPaint[options].apply(wPaint, [value]);
-        }
-        else if (value) {
-          if (wPaint[func]) { wPaint[func].apply(wPaint, [value]); }
-          if (wPaint.options[options]) { wPaint.options[options] = value; }
-        }
-        else {
-          if (wPaint[func]) { values.push(wPaint[func].apply(wPaint, [value])); }
-          else if (wPaint.options[options]) { values.push(wPaint.options[options]); }
-          else { values.push(null); }
-        }
-      }
-    }
-
-    function elCreateEach(i, el) {
+    function create() {
       if (!$.support.canvas) {
-        $(el).html('Browser does not support HTML5 canvas, please upgrade to a more modern browser.');
+        /*jshint validthis: true */
+        $(this).html('Browser does not support HTML5 canvas, please upgrade to a more modern browser.');
         return false;
       }
 
-      get(el);
+      /*jshint validthis: true */
+      return $.proxy(get, this)();
     }
 
-    function get(el) {
-      var wPaint = $.data(el, 'wPaint');
+    function get() {
+      /*jshint validthis: true */
+      var wPaint = $.data(this, 'wPaint');
+
       if (!wPaint) {
-        var _options = $.extend(true, {}, options);
-
-        _options.lineWidth = parseInt(_options.lineWidth, 10);
-        _options.fontSize = parseInt(_options.fontSize, 10);
-
-        wPaint = new Paint(el, _options);
-        $.data(el, 'wPaint', wPaint);
+        /*jshint validthis: true */
+        wPaint = new Paint(this, $.extend(true, {}, options));
+        $.data(this, 'wPaint', wPaint);
       }
 
       return wPaint;
     }
 
-    // get/set values
-    if (typeof options === 'string') {
-      var values = [], elements = null;
+    function runOpts() {
+      /*jshint validthis: true */
+      var wPaint = $.data(this, 'wPaint');
 
-      elements = this.each(elOptionsEach);
-
-      if (values.length === 1) { return values[0]; }
-      else if (values.length > 0) { return values; }
-      else { return elements; }
+      if (wPaint) {
+        if (value !== undefined) {
+          if (wPaint[options]) { wPaint[options].apply(wPaint, [value]); }
+          else {
+            if (wPaint[func]) { wPaint[func].apply(wPaint, [value]); }
+            if (wPaint.options[options]) { wPaint.options[options] = value; }
+          }
+        }
+        else {
+          if (wPaint[func]) { values.push(wPaint[func].apply(wPaint, [value])); }
+          else if (wPaint.options[options]) { values.push(wPaint.options[options]); }
+          else { values.push(undefined); }
+        }
+      }
     }
 
-    // setup options here after get/set calls
-    options = $.extend({}, $.fn.wPaint.defaults, options);
+    if (typeof options === 'string') {
+      var values = [],
+          func = (value ? 'set' : 'get') + options.charAt(0).toUpperCase() + options.substring(1);
 
-    // return elements
-    return this.each(elCreateEach);
+      this.each(runOpts);
+
+      if (values.length) { return values.length === 1 ? values[0] : values; }
+      
+      return this;
+    }
+
+    options = $.extend({}, $.fn.wPaint.defaults, options);
+    options.lineWidth = parseInt(options.lineWidth, 10);
+    options.fontSize = parseInt(options.fontSize, 10);
+
+    return this.each(create);
   };
 
   /************************************************************************
