@@ -18,6 +18,7 @@ module.exports = function(grunt) {
         boss: true,
         eqnull: true,
         white: true,
+        validthis: true,
         quotmark: 'single',
         globals: {
           'window': true,

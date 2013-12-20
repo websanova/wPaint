@@ -1071,21 +1071,17 @@
 
     function create() {
       if (!$.support.canvas) {
-        /*jshint validthis: true */
         $(this).html('Browser does not support HTML5 canvas, please upgrade to a more modern browser.');
         return false;
       }
 
-      /*jshint validthis: true */
       return $.proxy(get, this)();
     }
 
     function get() {
-      /*jshint validthis: true */
       var wPaint = $.data(this, 'wPaint');
 
       if (!wPaint) {
-        /*jshint validthis: true */
         wPaint = new Paint(this, $.extend(true, {}, options));
         $.data(this, 'wPaint', wPaint);
       }
@@ -1094,7 +1090,6 @@
     }
 
     function runOpts() {
-      /*jshint validthis: true */
       var wPaint = $.data(this, 'wPaint');
 
       if (wPaint) {
