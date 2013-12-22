@@ -1093,12 +1093,10 @@
       var wPaint = $.data(this, 'wPaint');
 
       if (wPaint) {
-        if (value !== undefined) {
-          if (wPaint[options]) { wPaint[options].apply(wPaint, [value]); }
-          else {
-            if (wPaint[func]) { wPaint[func].apply(wPaint, [value]); }
-            if (wPaint.options[options]) { wPaint.options[options] = value; }
-          }
+        if (wPaint[options]) { wPaint[options].apply(wPaint, [value]); }
+        else if (value !== undefined) {
+          if (wPaint[func]) { wPaint[func].apply(wPaint, [value]); }
+          if (wPaint.options[options]) { wPaint.options[options] = value; }
         }
         else {
           if (wPaint[func]) { values.push(wPaint[func].apply(wPaint, [value])); }
