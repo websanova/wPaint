@@ -48,8 +48,13 @@
       <script type="text/javascript" src="./plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
       <script type="text/javascript" src="./plugins/file/wPaint.menu.main.file.min.js"></script>
 
-      <div id="wPaint" style="position:relative; width:500px; height:200px; background-color:#7a7a7a; margin:60px auto;"></div>
-      <div style="position:relative; width:500px; height:200px; margin:20px auto;"><img id="wPaint-img" src=""/></div>
+      <div id="wPaint" style="position:relative; width:500px; height:200px; background-color:#7a7a7a; margin:70px auto 20px auto;"></div>
+
+      <center style="margin-bottom: 50px;">
+        <input type="button" value="toggle menu" onclick="console.log($('#wPaint').wPaint('menuOrientation')); $('#wPaint').wPaint('menuOrientation', $('#wPaint').wPaint('menuOrientation') === 'vertical' ? 'horizontal' : 'vertical');"/>
+      </center>
+
+      <center id="wPaint-img"></center>
 
       <script type="text/javascript">
         var images = [

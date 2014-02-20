@@ -233,6 +233,13 @@
       this.$el.css('cursor', 'url("' + this.options.path + cursor.path + '") ' + cursor.left + ' ' + cursor.top + ', default');
     },
 
+    setMenuOrientation: function (orientation) {
+      $.each(this.menus.all, function (i, menu) {
+        menu.options.aligment = orientation;
+        menu.setAlignment(orientation);
+      });
+    },
+
     getImage: function (withBg) {
       var canvasSave = document.createElement('canvas'),
           ctxSave = canvasSave.getContext('2d');
@@ -513,8 +520,6 @@
   
   Menu.prototype = {
     generate: function () {
-      var tempLeft = null;
-
       this.$menu = $('<div class="wPaint-menu"></div>');
       this.$menuHolder = $('<div class="wPaint-menu-holder wPaint-menu-name-' + this.name + '"></div>');
       
@@ -536,26 +541,11 @@
       // append menu items
       this.$menu.append(this.$menuHolder.append(this.$menuHandle));
       this.reset();
-      this.setAlignment(this.options.alignment);
       
       // append menu
       this.wPaint.$el.append(this.$menu);
 
-      // fix menu width
-      tempLeft = this.$menu.css('left');
-      this.$menu.css('left', -10000);
-      this.$menu.width(this.$menu.width());
-      this.$menu.css('left', tempLeft);
-
-      // set proper offsets based on alignment
-      if (this.type === 'secondary') {
-        if (this.options.alignment === 'horizontal') {
-          this.dockOffset.top = this.wPaint.menus.primary.$menu.outerHeight(true);
-        }
-        else {
-          this.dockOffset.left = this.wPaint.menus.primary.$menu.outerWidth(true);
-        }
-      }      
+      this.setAlignment(this.options.alignment);
     },
 
     // create / reset menu - will add new entries in the array
@@ -607,8 +597,23 @@
     },
 
     setAlignment: function (alignment) {
+      var tempLeft = this.$menu.css('left');
+
       this.$menu.attr('class', this.$menu.attr('class').replace(/wPaint-menu-alignment-.+\s|wPaint-menu-alignment-.+$/, ''));
       this.$menu.addClass('wPaint-menu-alignment-' + alignment);
+
+      this.$menu.width('auto').css('left', -10000);
+      this.$menu.width(this.$menu.width()).css('left', tempLeft);
+
+      // set proper offsets based on alignment
+      if (this.type === 'secondary') {
+        if (this.options.alignment === 'horizontal') {
+          this.dockOffset.top = this.wPaint.menus.primary.$menu.outerHeight(true);
+        }
+        else {
+          this.dockOffset.left = this.wPaint.menus.primary.$menu.outerWidth(true);
+        }
+      }   
     },
 
     /************************************
