@@ -178,7 +178,7 @@
 
         if (!resize) {
           // get width/height
-          if (myImage.width > _this.width || myImage.height > _this.height) {
+          if (myImage.width != _this.width || myImage.height != _this.height) {
             xR = _this.width / myImage.width;
             yR = _this.height / myImage.height;
 
