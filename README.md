@@ -25,6 +25,7 @@ Settings are available per plugin.  Meaning only when that plugin is included wi
 
 ```js
 $.fn.wPaint.defaults = {
+  path:            '/',                // set absolute path for images and cursors
   theme:           'standard classic', // set theme
   autoScaleImage:  true,               // auto scale images to size of canvas (fg and bg)
   autoCenterImage: true,               // auto center images (fg and bg, default is left/top corner)
@@ -34,6 +35,7 @@ $.fn.wPaint.defaults = {
   menuOffsetTop:   5,                  // top offset of primary menu
   bg:              null,               // set bg on init
   image:           null,               // set image on init
+  imageStretch:    false,              // stretch smaller images to full canvans dimensions
   onShapeDown:     null,               // callback for draw down event
   onShapeMove:     null,               // callback for draw move event
   onShapeUp:       null                // callback for draw up event
