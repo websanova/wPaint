@@ -551,7 +551,7 @@
     // create / reset menu - will add new entries in the array
     reset: function () {
       var _this = this,
-          menu = $.fn.wPaint.menus[this.name],
+          menu = $.extend(true, {}, $.fn.wPaint.menus[this.name]),
           key;
 
       // self invoking function
