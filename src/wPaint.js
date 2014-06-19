@@ -566,7 +566,7 @@
           menu.items[key].name = key;
 
           // use default img if img not set
-          menu.items[key].img = _this.wPaint.options.path + (menu.items[key].img || menu.img);
+          menu.items[key].img = _this.wPaint.options.path + menu.img;
 
           // make self invoking to avoid overwrites
           (itemAppend)(menu.items[key]);
