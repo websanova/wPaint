@@ -40,6 +40,13 @@
         index: 5,
         callback: function () { this.setMode('line'); }
       },
+      arrow: {
+        icon: 'activate',
+        img: 'plugins/main/img/icons-arrow.png',
+        index: 0,
+        title: 'Arrow',
+        callback: function () { this.setMode('arrow'); }
+      },
       pencil: {
         icon: 'activate',
         title: 'Pencil',
