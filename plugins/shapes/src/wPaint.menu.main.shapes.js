@@ -202,6 +202,45 @@
     _drawHexagonUp: function (e) {
       this._drawShapeUp(e);
       this._addUndo();
+    },
+
+    /****************************************
+     * arrow
+     ****************************************/
+    _drawArrowDown: function (e) { this._drawShapeDown(e); },
+
+    _drawArrowMove: function (e) {
+      this._drawShapeMove(e);
+
+      var xo = this.canvasTempLeftOriginal;
+      var yo = this.canvasTempTopOriginal;
+
+      if (e.pageX < xo) { e.x = e.x + e.w; e.w = e.w * - 1; }
+      if (e.pageY < yo) { e.y = e.y + e.h; e.h = e.h * - 1; }
+
+      var lx = e.x + e.w;
+      var ly = e.y + e.h;
+
+      var angle = Math.atan2(e.h, e.w);
+
+      this.ctxTemp.beginPath();
+      this.ctxTemp.moveTo(e.x, e.y);
+      this.ctxTemp.lineTo(lx, ly);
+      this.ctxTemp.stroke();
+
+      this.ctxTemp.beginPath();
+      this.ctxTemp.moveTo(lx, ly);
+      this.ctxTemp.lineTo(lx - 10 * Math.cos(angle - Math.PI / 7), ly - 10 * Math.sin(angle - Math.PI / 7));
+      this.ctxTemp.lineTo(lx - 10 * Math.cos(angle + Math.PI / 7), ly - 10 * Math.sin(angle + Math.PI / 7));
+      this.ctxTemp.lineTo(lx, ly);
+      this.ctxTemp.lineTo(lx - 10 * Math.cos(angle - Math.PI / 7), ly - 10 * Math.sin(angle - Math.PI / 7));
+      this.ctxTemp.closePath();
+      this.ctxTemp.stroke();
+    },
+
+    _drawArrowUp: function (e) {
+      this._drawShapeUp(e);
+      this._addUndo();
     }
   });
 })(jQuery);
