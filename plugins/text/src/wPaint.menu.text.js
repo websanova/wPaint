@@ -180,7 +180,7 @@
         this.$textCalc.html('');
         lastj = 0;
         
-        for (j = 0, jj = lines[0].length; j < jj; j++) {
+        for (j = 0, jj = lines[i].length; j < jj; j++) {
           width = this.$textCalc.append(lines[i][j]).width();
           
           if (width > textInputWidth) {
